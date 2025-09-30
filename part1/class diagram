@@ -1,0 +1,61 @@
+classDiagram
+class CoreClass {
+    +id: uuid
+}
+
+class User {
+  + firstname: str
+  + lastname: str
+  + email: str
+  + password: str
+  creation()
+  read()
+  update()
+  delete()
+}
+
+class Place {
+  + title: str
+  + description: str
+  + price: int
+  + latitude: float
+  + longitude: float
+  creation()
+  read()
+  update()
+  delete()
+}
+
+class Review {
+  + rating: int
+  + comment: str
+  creation()
+  read()
+  update()
+  delete()
+}
+
+class Amenity {
+  + name: str
+  + description: str
+  creation()
+  read()
+  update()
+  delete()
+}
+
+class PlaceAmenity {
+  - placeId: uuid
+  - amenityId: uuid
+}
+
+CoreClass <|-- User
+CoreClass <|-- Place
+CoreClass <|-- Review
+CoreClass <|-- Amenity
+
+User "1" *-- "0..n" Place
+User "1" *-- "0..n" Review
+Place "1" *-- "0..n" Review
+Place "1" *-- "0..n" PlaceAmenity
+Amenity "1" *-- "0..n" PlaceAmenity
