@@ -1,0 +1,18 @@
+graph LR
+
+subgraph Presentation [Presentation Layer]
+  API[API REST]
+end
+
+subgraph Business [Business Logic Layer]
+  Model
+  Facade
+end
+
+subgraph Persistence [Persistence Layer]
+  DB[(Database)]
+end
+
+API --> Facade
+Model --> DB
+Facade --> Model
