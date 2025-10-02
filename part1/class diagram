@@ -1,6 +1,14 @@
 classDiagram
+
+%% Classe de base
 class CoreClass {
     +id: uuid
+    +created_at: datetime
+    +updated_at: datetime
+    +creation()
+    +read()
+    +update()
+    +delete()
 }
 
 class User {
@@ -47,12 +55,17 @@ class Amenity {
 class PlaceAmenity {
   - placeId: uuid
   - amenityId: uuid
+  creation()
+  read()
+  update()
+  delete()
 }
 
 CoreClass <|-- User
 CoreClass <|-- Place
 CoreClass <|-- Review
 CoreClass <|-- Amenity
+CoreClass <|-- PlaceAmenity
 
 User "1" *-- "0..n" Place
 User "1" *-- "0..n" Review
