@@ -1,0 +1,12 @@
+sequenceDiagram
+participant User
+participant API
+participant BusinessLogic
+participant Database
+
+User->>API: API Call (Place Creation)
+API->>BusinessLogic: Validate and Process Request
+BusinessLogic->>Database: Save Data
+Database-->>BusinessLogic: Confirm Save (OK / Error)
+BusinessLogic-->>API: Return Response (code 200/500)
+API-->>User: HTTP Response (JSON + Code 201/400/409)
