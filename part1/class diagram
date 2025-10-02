@@ -1,64 +1,64 @@
 classDiagram
 
-%% Classe de base
 class CoreClass {
-    +id: uuid
-    +created_at: datetime
-    +updated_at: datetime
-    +creation()
-    +read()
-    +update()
-    +delete()
+    - id: uuid
+    - created_at: datetime
+    - updated_at: datetime
+    creation()
+    read()
+    update()
+    delete()
 }
 
 class User {
-  + firstname: str
-  + lastname: str
-  + email: str
-  + password: str
-  creation()
-  read()
-  update()
-  delete()
+    + firstname: string
+    + lastname: string
+    - email: string
+    - password: string
+    - administrator: bool
+    creation()
+    read()
+    update()
+    delete()
 }
 
 class Place {
-  + title: str
-  + description: str
-  + price: int
-  + latitude: float
-  + longitude: float
-  creation()
-  read()
-  update()
-  delete()
+    - title: string
+    + description: string
+    + price: int
+    + latitude: float
+    + longitude: float
+    creation()
+    read()
+    update()
+    delete()
 }
 
 class Review {
-  + rating: int
-  + comment: str
-  creation()
-  read()
-  update()
-  delete()
+    + rating: int
+    + comment: string
+    creation()
+    read()
+    update()
+    delete()
 }
 
 class Amenity {
-  + name: str
-  + description: str
-  creation()
-  read()
-  update()
-  delete()
+    + name: string
+    + description: string
+    creation()
+    read()
+    update()
+    delete()
 }
 
 class PlaceAmenity {
-  - placeId: uuid
-  - amenityId: uuid
-  creation()
-  read()
-  update()
-  delete()
+    - placeId: uuid
+    - amenityId: uuid
+    creation()
+    read()
+    update()
+    delete()
 }
 
 CoreClass <|-- User
