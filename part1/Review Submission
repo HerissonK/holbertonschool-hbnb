@@ -1,3 +1,20 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#FF385C',
+    'primaryTextColor': '#FFFFFF',
+    'primaryBorderColor': '#D32F2F',
+    'actorTextColor': '#FFFFFF',
+    'actorBorder': '#D32F2F',
+    'actorBkg': '#FF385C',
+    'lineColor': '#FF385C',
+    'sequenceNumberColor': '#D32F2F',
+    'signalColor': '#FF385C',
+    'labelBoxBkgColor': '#FFF0F3',
+    'labelTextColor': '#D32F2F'
+  }
+}}%%
+
 sequenceDiagram
 participant User
 participant API
@@ -8,5 +25,5 @@ User->>API: API Call (Review Submission)
 API->>BusinessLogic: Validate and Process Request
 BusinessLogic->>Database: Save Data
 Database-->>BusinessLogic: Confirm Save (OK / Error)
-BusinessLogic-->>API: Return Response (code 200/500)
+BusinessLogic-->>API: Return Response (code 200)
 API-->>User: HTTP Response (JSON + Code 201/400/403/409)
