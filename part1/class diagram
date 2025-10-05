@@ -1,3 +1,18 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#FF385C',
+    'primaryTextColor': '#FFFFFF',
+    'primaryBorderColor': '#D32F2F',
+    'lineColor': '#FF385C',
+    'classTextColor': '#D32F2F',
+    'classBorderColor': '#D32F2F',
+    'classBackground': '#FFF0F3',
+    'labelBoxBkgColor': '#FFF0F3',
+    'labelTextColor': '#D32F2F'
+  }
+}}%%
+
 classDiagram
 
 class CoreClass {
