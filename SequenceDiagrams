@@ -1,0 +1,29 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#FF385C',
+    'primaryTextColor': '#FFFFFF',
+    'primaryBorderColor': '#D32F2F',
+    'actorTextColor': '#FFFFFF',
+    'actorBorder': '#D32F2F',
+    'actorBkg': '#FF385C',
+    'lineColor': '#FF385C',
+    'sequenceNumberColor': '#D32F2F',
+    'signalColor': '#FF385C',
+    'labelBoxBkgColor': '#FFF0F3',
+    'labelTextColor': '#D32F2F'
+  }
+}}%%
+
+sequenceDiagram
+participant User
+participant API
+participant BusinessLogic
+participant Database
+
+User->>API: API Call (Fetching a List of Places)
+API->>BusinessLogic: Validate and Process Request
+BusinessLogic->>Database: Save Data
+Database-->>BusinessLogic: Confirm Save (OK / Error)
+BusinessLogic-->>API: Return Response (code 200)
+API-->>User: HTTP Response (JSON + Code 200/204/400)
