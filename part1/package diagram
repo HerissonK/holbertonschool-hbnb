@@ -1,15 +1,29 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#FF385C',
+    'primaryTextColor': '#FFFFFF',
+    'primaryBorderColor': '#D32F2F',
+    'lineColor': '#FF385C',
+    'nodeTextColor': '#D32F2F'
+  }
+}}%%
+
 graph LR
 
 subgraph Presentation [Presentation Layer]
+  style Presentation fill:#FFD6E0,stroke:#D32F2F,stroke-width:2px
   API[API REST]
 end
 
 subgraph Business [Business Logic Layer]
+  style Business fill:#FFB0C1,stroke:#D32F2F,stroke-width:2px
   Model
   Facade
 end
 
 subgraph Persistence [Persistence Layer]
+  style Persistence fill:#FF85A3,stroke:#D32F2F,stroke-width:2px
   DB[(Database)]
 end
 
