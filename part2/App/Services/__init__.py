@@ -1,4 +1,3 @@
-#!/usr/bin/python3
+from app.services.facade import HBnBFacade
 
-if __name__ == "__main__":
-    app.run()
+facade = HBnBFacade()
