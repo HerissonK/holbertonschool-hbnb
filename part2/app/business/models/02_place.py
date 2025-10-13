@@ -1,6 +1,10 @@
+from core_model import BaseModel
+
+
 class Place(BaseModel):
     def __init__(self, title, description, price, latitude, longitude, owner):
         super().__init__()
+        #self.__place_id = str(uuid.uuid4())
         self.title = title
         self.description = description
         self.price = price
