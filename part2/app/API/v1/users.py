@@ -16,6 +16,7 @@ class UserList(Resource):
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
+
     def post(self):
         """Register a new user"""
         user_data = api.payload
@@ -28,6 +29,20 @@ class UserList(Resource):
         new_user = facade.create_user(user_data)
         return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
 
+    # GET BY A LIST
+    def get_list(self):
+        """Get the list of all users"""
+        users = facade.list_users()
+        return [
+            {
+                'id' = user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email
+            } 
+            for user in users
+        ], 200
+
 @api.route('/<user_id>')
 class UserResource(Resource):
     @api.response(200, 'User details retrieved successfully')
@@ -37,4 +52,7 @@ class UserResource(Resource):
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
-        return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
+        return {'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email}, 200
