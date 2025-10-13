@@ -1,17 +1,19 @@
 from core_model import BaseModel
+from datetime import datetime
+from email_validator import validate_email, EmailNotValidError
 
 
 class User(BaseModel):
-    def __init__(self, first_name, last_name, email, password, administrator):
+    def __init__(self, first_name, last_name, email, password, is_admin):
         super().__init__()
-        #self.__user_id = str(uuid.uuid4())
+        # self.__user_id = str(uuid.uuid4())
         self.first_name = first_name
         self.last_name = last_name
-        self.__email = email
-        self.__password = password
-        self.__administrator = administrator
-        self.__created_at = datetime.now()
-        self.__updated_at = datetime.now()
+        self.__email = self._validate_and_set_email(email)
+        #self.__password = password BONUS à revoir
+        self.__is_admin = is_admin
+        # self.__created_at = datetime.now()
+        # self.__updated_at = datetime.now()
 
 
     #########################################
@@ -44,14 +46,14 @@ class User(BaseModel):
     def set_email(self, value):
         return self.__email = value
 
-    """ GETTER/SETTER administrator """
+    """ GETTER/SETTER is_admin """
     @property
-    def get_administrator(self, administrator):
-        return self.__administrator
+    def get_is_admin(self, is_admin):
+        return self.__is_admin
 
-    @set_administrator.setter
-    def set_administrator(self, value):
-        return self.__administrator = value
+    @set_is_admin.setter
+    def set_is_admin(self, value):
+        return self.__is_admin = value
 
     """ GETTER/SETTER created_at """
     @property

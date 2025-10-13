@@ -1,11 +1,12 @@
 from core_model import BaseModel
+from datetime import datetime
 
 
 class Amenity(BaseModel):
-    def __init__(self, place_id, name, description):
+    def __init__(self, name, description):
         super().__init__()
-        #self.__place_id = str(uuid.uuid4())
-        self.comment = comment
-        self.place = place
-        self.date_creation = date_creation
-        self.user = user
+        #self.__review_id = str(uuid.uuid4())
+        self.name = name
+        #self.description = description à voir suivant le rendu
+        #self.created_at = datetime.now()
+        #self.updated_at = datetime.now()

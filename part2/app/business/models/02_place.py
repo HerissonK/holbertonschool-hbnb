@@ -1,16 +1,16 @@
 from core_model import BaseModel
-
+from datetime import datetime
 
 class Place(BaseModel):
-    def __init__(self, title, description, price, latitude, longitude, owner):
+    def __init__(self, title, description, price, latitude, longitude, owner, reviews, amenities):
         super().__init__()
-        #self.__place_id = str(uuid.uuid4())
+        # self.__place_id = str(uuid.uuid4())
         self.title = title
         self.description = description
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner = owner
+        self.owner = user # à verifier
         self.reviews = []  # List to store related reviews
         self.amenities = []  # List to store related amenities
 
