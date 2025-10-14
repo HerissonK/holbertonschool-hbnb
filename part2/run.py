@@ -10,4 +10,4 @@ api = Api(app, version='1.0', title='HBNB API', description='Simple HBNB REST AP
 api.add_namespace(users_api, path='/api/v1/users')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

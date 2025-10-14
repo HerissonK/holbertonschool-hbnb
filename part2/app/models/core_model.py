@@ -15,7 +15,6 @@ class BaseModel:
     def save(self):
         """Update the updated_at timestamp whenever the object is modified"""
         self.updated_at = datetime.now()
-        data[self.id] = self
 
     # POST 
     @classmethod

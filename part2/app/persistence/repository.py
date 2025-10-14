@@ -42,7 +42,12 @@ class InMemoryRepository(Repository):
     def update(self, obj_id, data):
         obj = self.get(obj_id)
         if obj:
-            obj.update(data)
+            for key, value in data.items():
+                if hasattr(obj, key):
+                    setattr(obj, key, value)
+            return obj
+        return None
+
 
     def delete(self, obj_id):
         if obj_id in self._storage:
