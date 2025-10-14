@@ -1,5 +1,7 @@
 from app.persistence.repository import InMemoryRepository
 from app.models.user import User
+from app.models.amenity import Amenity
+import uuid
 
 class HBnBFacade:
     def __init__(self):
@@ -28,3 +30,33 @@ class HBnBFacade:
 
     def delete_user(self, user_id):
         return self.user_repo.delete(user_id)
+
+    #Amenity
+
+    def create_amenity(self, data):
+        # Vérifie qu'un nom est fourni
+        name = data.get('name')
+        if not name:
+            raise ValueError("Name is required")
+
+        # Vérifie unicité
+        existing = self.amenity_repo.get_by_attribute('name', name)
+        if existing:
+            return None
+
+        # Crée un objet Amenity (à définir)
+        amenity = Amenity(name=name)
+        self.amenity_repo.add(amenity)
+        return amenity
+
+    def get_amenity(self, amenity_id):
+        return self.amenity_repo.get(amenity_id)
+
+    def list_amenities(self):
+        return self.amenity_repo.get_all()
+
+    def update_amenity(self, amenity_id, data):
+        return self.amenity_repo.update(amenity_id, data)
+
+    def delete_amenity(self, amenity_id):
+        return self.amenity_repo.delete(amenity_id)
