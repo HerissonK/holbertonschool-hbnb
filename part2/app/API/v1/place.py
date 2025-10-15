@@ -3,7 +3,7 @@ from app.services import facade
 
 api = Namespace('places', description='Place operations')
 
-# Define the models for related entities
+# Models pour Swagger / validation
 amenity_model = api.model('PlaceAmenity', {
     'id': fields.String(description='Amenity ID'),
     'name': fields.String(description='Name of the amenity')
@@ -16,7 +16,7 @@ user_model = api.model('PlaceUser', {
     'email': fields.String(description='Email of the owner')
 })
 
-# Define the place model for input validation and documentation
+# Model Place pour validation et Swagger
 place_model = api.model('Place', {
     'title': fields.String(required=True, description='Title of the place'),
     'description': fields.String(description='Description of the place'),
@@ -43,24 +43,27 @@ class PlaceList(Resource):
             'price': new_place.price,
             'latitude': new_place.latitude,
             'longitude': new_place.longitude,
+            'owner_id': getattr(new_place.owner, 'id', None),
+            'amenities': getattr(new_place, 'amenities', [])
         }, 201
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
         """Retrieve a list of all places"""
-    # Récupération de toutes les places via la méthode existante
-        places = facade.get_all("Place")
-        return [
-            {
-                'id': p.id,
-                'title': p.title,
-                'description': p.description,
-                'price': p.price,
-                'latitude': p.latitude,
-                'longitude': p.longitude,
-                'owner': p.owner
-            } for p in places
-        ], 200
+        places = facade.get_all_places()
+        result = []
+        for place in places:
+            result.append({
+                'id': place.id,
+                'title': place.title,
+                'description': place.description,
+                'price': place.price,
+                'latitude': place.latitude,
+                'longitude': place.longitude,
+                'owner_id': getattr(place.owner, 'id', place.owner),  # si owner est juste un ID
+                'amenities': getattr(place, 'amenities', [])          # renvoie directement la liste de str
+            })
+        return result, 200
 
 
 @api.route('/<place_id>')
@@ -72,16 +75,20 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {'error': 'Place not found'}, 404
+
         return {
-            'id': place.id,
-            'title': place.title,
-            'description': place.description,
-            'price': place.price,
-            'latitude': place.latitude,
-            'longitude': place.longitude,
-            'owner': place.owner
+            "id": place.id,
+            "title": getattr(place, "title", ""),
+            "description": getattr(place, "description", ""),
+            "price": getattr(place, "price", 0.0),
+            "latitude": getattr(place, "latitude", 0.0),
+            "longitude": getattr(place, "longitude", 0.0),
+            "owner_id": getattr(place.owner, 'id', place.owner),  # renvoyer l'id
+            "amenities": getattr(place, "amenities", []),
+            "created_at": getattr(place, "created_at", None).isoformat() if getattr(place, "created_at", None) else None,
+            "updated_at": getattr(place, "updated_at", None).isoformat() if getattr(place, "updated_at", None) else None
         }, 200
-    
+
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
@@ -103,5 +110,6 @@ class PlaceResource(Resource):
             'price': updated_place.price,
             'latitude': updated_place.latitude,
             'longitude': updated_place.longitude,
-            'owner': updated_place.owner
+            'owner_id': getattr(updated_place.owner, 'id', updated_place.owner),
+            'amenities': getattr(updated_place, 'amenities', [])
         }, 200
