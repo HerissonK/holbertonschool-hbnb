@@ -28,18 +28,9 @@ class HBnBFacade:
         return self.user_repo.delete(user_id)
 
     #Amenity
-    def create_amenity(self, data):
-        # Vérifie qu'un nom est fourni
-        name = data.get('name')
-        if not name:
-            raise ValueError("Name is required")
-        # Vérifie unicité
-        existing = self.amenity_repo.get_by_attribute('name', name)
-        if existing:
-            return None
-        # Crée un objet Amenity (à définir)
-        amenity = Amenity(name=name)
-        self.amenity_repo.add(amenity)
+    def create_amenity(self, amenity_data):
+        amenity = Amenity(**amenity_data)
+        self.amenity_repo.add(amenity)        
         return amenity
     def get_amenity(self, amenity_id):
         return self.amenity_repo.get(amenity_id)
@@ -97,19 +88,9 @@ class HBnBFacade:
 
 # Places
     def create_place(self, place_data):
-        owner = self.user_repo.get(place_data.get("owner_id"))
-        place = Place(
-            title=place_data.get("title"),
-            description=place_data.get("description"),
-            price=place_data.get("price"),
-            latitude=place_data.get("latitude"),
-            longitude=place_data.get("longitude"),
-            owner=owner
-        )
-        place.amenities = place_data.get("amenities", [])
-        self.place_repo.add(place)
+        place = Place(**place_data)
+        self.place_repo.add(place)        
         return place
-
     def get_place(self, place_id):
         return self.place_repo.get(place_id)
 

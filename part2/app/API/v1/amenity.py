@@ -10,20 +10,22 @@ amenity_model = api.model('Amenity', {
 
 @api.route('/')
 class AmenityList(Resource):
-    @api.expect(amenity_model, validate=True)
+    @api.expect(amenity_model)
     @api.response(201, 'Amenity successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
-        """Register a new amenity"""
-        amenity_data = api.payload
-        new_amenity = facade.create_amenity(amenity_data)
-        return {'id': new_amenity.id, 'name': new_amenity.name}, 201
+        """Register a new amenity"""  
 
-    @api.response(200, 'List of amenities retrieved successfully')
-    def get(self):
-        """Retrieve a list of all amenities"""
-        amenities = facade.list_amenities()
-        return [{'id': a.id, 'name': a.name} for a in amenities], 200
+        amenity_data = api.payload
+        required_fields = ["name"]
+
+        for field in required_fields:
+            value = amenity_data.get(field, "").strip()
+            if not value:
+                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+
+        new_amenity = facade.create_amenity(amenity_data)
+        return {"id": new_amenity.id, "name": new_amenity.name}, 201
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):

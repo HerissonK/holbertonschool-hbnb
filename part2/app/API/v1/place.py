@@ -34,18 +34,25 @@ class PlaceList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new place"""
+
         place_data = api.payload
-        new_place = facade.create_place(place_data)
-        return {
-            'id': new_place.id,
-            'title': new_place.title,
-            'description': new_place.description,
-            'price': new_place.price,
-            'latitude': new_place.latitude,
-            'longitude': new_place.longitude,
-            'owner_id': getattr(new_place.owner, 'id', None),
-            'amenities': getattr(new_place, 'amenities', [])
-        }, 201
+        required_fields = ["title", "description", "price", "latitude", "longitude", "owner_id"]
+
+        for field in required_fields:
+            value = place_data.get(field)
+        if value is None:
+            return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+
+    # Vérification spécifique pour les champs texte
+        if field in ["title", "description", "owner_id"] and isinstance(value, str):
+            if not value.strip():
+                return {"error": f"{field.replace('_', ' ').capitalize()} cannot be empty"}, 400
+
+    # Vérification spécifique pour les champs numériques
+        if field in ["price", "latitude", "longitude"] and not isinstance(value, (int, float)):
+            return {"error": f"{field.replace('_', ' ').capitalize()} must be a number"}, 400
+        
+        return {"Message": "Place was well created"}
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):

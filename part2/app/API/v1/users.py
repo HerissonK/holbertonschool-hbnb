@@ -12,21 +12,33 @@ user_model = api.model('User', {
 
 @api.route('/')
 class UserList(Resource):
-    @api.expect(user_model, validate=True)
-    @api.response(201, 'User successfully created')
-    @api.response(400, 'Email already registered or invalid input')
+    @api.expect(user_model)
+    @api.response(201, "User successfully created")
+    @api.response(400, "Invalid input data")
     def post(self):
-        """Register a new user"""
+        """Create a new user"""
         user_data = api.payload
 
-        if facade.get_user_by_email(user_data['email']):
-            return {"error": "Invalid input data"}, 400
+    # ✅ Vérification des champs requis
+        required_fields = ["first_name", "last_name", "email"]
+        for field in required_fields:
+            value = user_data.get(field, "").strip()
+            if not value:
+                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
 
-        if facade.get_user_by_email(user_data['email']):
-            return {'error': 'Email already registered'}, 400
+    # ✅ Vérification email
+        import re
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", user_data["email"]):
+            return {"error": "Invalid email format"}, 400
 
         new_user = facade.create_user(user_data)
-        return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
+        return {
+            "id": new_user.id,
+            "first_name": new_user.first_name,
+            "last_name": new_user.last_name,
+            "email": new_user.email
+        }, 201
+
 
     @api.response(200, 'List of users retrieved successfully')
     def get(self):
@@ -65,3 +77,4 @@ class UserResource(Resource):
         if not deleted:
             return {'error': 'User not found'}, 404
         return {'message': 'User deleted'}, 200
+
