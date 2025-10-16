@@ -54,6 +54,7 @@ class PlaceList(Resource):
         
         return {"Message": "Place was well created"}
 
+
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
         """Retrieve a list of all places"""
@@ -96,7 +97,6 @@ class PlaceResource(Resource):
             "updated_at": getattr(place, "updated_at", None).isoformat() if getattr(place, "updated_at", None) else None
         }, 200
 
-    @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(400, 'Invalid input data')
@@ -109,6 +109,20 @@ class PlaceResource(Resource):
         updated_place = facade.place_repo.update(place_id, api.payload)
         if not updated_place:
             return {'error': 'Failed to update place'}, 400
+
+    # Verification du remplissage de la totalite des champs
+        required_fields = ['id', 'name']
+        for field in required_fields:
+            if field not in place or place[field] in ("", None):
+                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+
+    # Verification spécifique pour le contenue de la description
+        description = data_review.get('description')
+        if description in ("", None):
+            return {"error": "description is required"}, 400
+
+        if not isinstance(description, str):
+            return {"error": "The description should a text"}, 400
 
         return {
             'id': updated_place.id,

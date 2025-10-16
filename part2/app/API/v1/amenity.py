@@ -38,7 +38,6 @@ class AmenityResource(Resource):
             return {'error': 'Amenity not found'}, 404
         return {'id': amenity.id, 'name': amenity.name}, 200
 
-    @api.expect(amenity_model, validate=True)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
     @api.response(400, 'Invalid input data')
@@ -48,5 +47,13 @@ class AmenityResource(Resource):
         updated = facade.update_amenity(amenity_id, amenity_data)
         if not updated:
             return {'error': 'Amenity not found'}, 404
+
+    # Verification du remplissage de la totalite des champs
+        required_fields = ['id', 'name']
+        for field in required_fields:
+            if field not in amenity_review or amenity_review[field] in ("", None):
+                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+
         amenity = facade.get_amenity(amenity_id)
+
         return {'id': amenity.id, 'name': amenity.name}, 200
