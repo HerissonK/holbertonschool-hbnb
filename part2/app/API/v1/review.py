@@ -1,3 +1,5 @@
+# SAVING DE REVIEW API 
+
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
@@ -21,6 +23,20 @@ class ReviewList(Resource):
         # Placeholder for the logic to register a new review
         review_data = api.payload
         new_review = facade.create_review(review_data)
+
+        required_fields = ['user_id', 'place_id', 'rating']
+
+        rating = review_data.get('rating')
+        if rating in ("", None):
+            return {"error": "Rating is required"}, 400
+
+        if not isinstance(rating, int) or not (1 <= rating <= 5):
+            return {"error": "Rating must be an integer between 1 and 5"}, 400
+
+        for field in required_fields:
+            if field not in review_data or review_data[field] in ("", None):
+                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+        
         return {
             'id': new_review.id,
             'text': new_review.text,
@@ -76,6 +92,18 @@ class ReviewResource(Resource):
         updated_review = facade.update_review(review_id, data_review)
         if not updated_review:
             return {"error": "Review not found"}, 404
+
+        required_fields = ['user_id', 'place_id', 'text']
+        for field in required_fields:
+            if field not in data_review or data_review[field] in ("", None):
+                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+
+        text = data_review.get('text')
+        if text in ("", None):
+            return {"error": "Comment is required"}, 400
+
+        if not isinstance(text, str):
+            return {"error": "The comment should a text"}, 400
 
         return {
                 "message": "Review updated successfully"

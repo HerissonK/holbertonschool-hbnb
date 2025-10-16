@@ -44,15 +44,7 @@ class HBnBFacade:
     # R E V I E W S 
     def create_review(self, review_data):
     # Placeholder for logic to create a review, including validation for user_id, place_id, and rating
-        if 'user_id' not in review_data or not review_data['user_id']:
-            raise ValueError("User ID is required")
-
-        if 'place_id' not in review_data or not review_data['place_id']:
-            raise ValueError("Place ID is required")
-
-        if 'rating' not in review_data:
-            raise ValueError("Rating is required")
-
+        
         new_review = Review(
             text=review_data['text'],
             rating=review_data['rating'],
@@ -85,6 +77,7 @@ class HBnBFacade:
     def delete_review(self, review_id):
     # Placeholder for logic to delete a review
         return self.review_repo.delete(review_id)
+
 
 # Places
     def create_place(self, place_data):
