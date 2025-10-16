@@ -20,6 +20,9 @@ class UserList(Resource):
         user_data = api.payload
 
         if facade.get_user_by_email(user_data['email']):
+            return {"error": "Invalid input data"}, 400
+
+        if facade.get_user_by_email(user_data['email']):
             return {'error': 'Email already registered'}, 400
 
         new_user = facade.create_user(user_data)
