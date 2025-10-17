@@ -18,3 +18,61 @@ class TestAmenityEndpoints(unittest.TestCase):
         response = self.client.post('/api/v1/amenities/', json={
             "name": "WiFi"
         })
+        self.assertEqual(response.status_code, 201)
+        data = response.get_json()
+        self.assertIn('id', data)
+        self.assertEqual(data['name'], 'WiFi')
+
+    def test_create_amenity_empty_name(self):
+        """Test: Création avec un nom vide"""
+        response = self.client.post('/api/v1/amenities/', json={
+            "name": ""
+        })
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn('error', data)
+
+    def test_create_amenity_missing_name(self):
+        """Test: Création sans champ 'name'"""
+        response = self.client.post('/api/v1/amenities/', json={})
+        self.assertEqual(response.status_code, 400)
+        data = response.get_json()
+        self.assertIn('error', data)
+
+    def test_get_amenity_success(self):
+        """Test: Récupération d'une amenity existante"""
+        # Créer une amenity
+        create_resp = self.client.post('/api/v1/amenities/', json={"name": "Pool"})
+        amenity_id = create_resp.get_json()['id']
+
+        # Récupérer cette amenity
+        response = self.client.get(f'/api/v1/amenities/{amenity_id}')
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(data['name'], 'Pool')
+
+    def test_get_amenity_not_found(self):
+        """Test: Récupération d'une amenity inexistante"""
+        response = self.client.get('/api/v1/amenities/nonexistent-id')
+        self.assertEqual(response.status_code, 404)
+
+    def test_delete_amenity_success(self):
+        """Test: Suppression d'une amenity existante"""
+        create_resp = self.client.post('/api/v1/amenities/', json={"name": "Gym"})
+        amenity_id = create_resp.get_json()['id']
+
+        delete_resp = self.client.delete(f'/api/v1/amenities/{amenity_id}')
+        self.assertEqual(delete_resp.status_code, 204)  # Suppression réussie sans contenu
+
+        # Vérifier que l'amenity n'existe plus
+        get_resp = self.client.get(f'/api/v1/amenities/{amenity_id}')
+        self.assertEqual(get_resp.status_code, 404)
+
+    def test_delete_amenity_not_found(self):
+        """Test: Suppression d'une amenity inexistante"""
+        response = self.client.delete('/api/v1/amenities/nonexistent-id')
+        self.assertEqual(response.status_code, 404)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
