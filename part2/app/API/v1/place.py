@@ -38,22 +38,35 @@ class PlaceList(Resource):
         place_data = api.payload
         required_fields = ["title", "description", "price", "latitude", "longitude", "owner_id"]
 
+        # Vérification des champs obligatoires
         for field in required_fields:
             value = place_data.get(field)
-        if value is None:
-            return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+            if value is None:
+                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
 
-    # Vérification spécifique pour les champs texte
-        if field in ["title", "description", "owner_id"] and isinstance(value, str):
-            if not value.strip():
-                return {"error": f"{field.replace('_', ' ').capitalize()} cannot be empty"}, 400
+            # Vérification spécifique pour les champs texte
+            if field in ["title", "description", "owner_id"] and isinstance(value, str):
+                if not value.strip():
+                    return {"error": f"{field.replace('_', ' ').capitalize()} cannot be empty"}, 400
 
-    # Vérification spécifique pour les champs numériques
-        if field in ["price", "latitude", "longitude"] and not isinstance(value, (int, float)):
-            return {"error": f"{field.replace('_', ' ').capitalize()} must be a number"}, 400
-        
-        return {"Message": "Place was well created"}
+            # Vérification spécifique pour les champs numériques
+            if field in ["price", "latitude", "longitude"] and not isinstance(value, (int, float)):
+                return {"error": f"{field.replace('_', ' ').capitalize()} must be a number"}, 400
 
+        # ✅ Vérification que le prix n’est pas négatif
+        if place_data["price"] < 0:
+            return {"error": "Price cannot be negative"}, 400
+
+        # Si toutes les vérifications passent, création du lieu
+        new_place = facade.create_place(place_data)
+        return {
+            "id": new_place.id,
+            "title": new_place.title,
+            "description": new_place.description,
+            "price": new_place.price,
+            "latitude": new_place.latitude,
+            "longitude": new_place.longitude,
+        }, 201
 
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
@@ -74,28 +87,6 @@ class PlaceList(Resource):
         return result, 200
 
 
-@api.route('/<place_id>')
-class PlaceResource(Resource):
-    @api.response(200, 'Place details retrieved successfully')
-    @api.response(404, 'Place not found')
-    def get(self, place_id):
-        """Get place details by ID"""
-        place = facade.get_place(place_id)
-        if not place:
-            return {'error': 'Place not found'}, 404
-
-        return {
-            "id": place.id,
-            "title": getattr(place, "title", ""),
-            "description": getattr(place, "description", ""),
-            "price": getattr(place, "price", 0.0),
-            "latitude": getattr(place, "latitude", 0.0),
-            "longitude": getattr(place, "longitude", 0.0),
-            "owner_id": getattr(place.owner, 'id', place.owner),  # renvoyer l'id
-            "amenities": getattr(place, "amenities", []),
-            "created_at": getattr(place, "created_at", None).isoformat() if getattr(place, "created_at", None) else None,
-            "updated_at": getattr(place, "updated_at", None).isoformat() if getattr(place, "updated_at", None) else None
-        }, 200
 
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
