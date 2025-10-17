@@ -35,46 +35,38 @@ class PlaceList(Resource):
     @api.response(400, 'Invalid input data')
     def post(self):
         """Register a new place"""
-
         place_data = api.payload
-        required_fields = ["title", "description", "price", "latitude", "longitude", "owner"]
+        required_fields = ["title", "description", "price", "latitude", "longitude", "owner_id"]
 
-        # Vérification des champs obligatoires
+        # Vérifie que tous les champs requis sont présents et valides
         for field in required_fields:
             value = place_data.get(field)
             if value is None:
                 return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
 
-    # Vérification spécifique pour les champs texte
-        if field in ["title", "description", "owner"] and isinstance(value, str):
-            if not value.strip():
-                return {"error": f"{field.replace('_', ' ').capitalize()} cannot be empty"}, 400
+            # Vérifie que les champs texte ne sont pas vides
+            if field in ["title", "description", "owner_id"] and isinstance(value, str):
+                if not value.strip():
+                    return {"error": f"{field.replace('_', ' ').capitalize()} cannot be empty"}, 400
 
-    # Vérification spécifique pour les champs numériques
-        if field in ["price", "latitude", "longitude"] and not isinstance(value, (int, float)):
-            return {"error": f"{field.replace('_', ' ').capitalize()} must be a number"}, 400
+            # Vérifie que les champs numériques sont bien des nombres
+            if field in ["price", "latitude", "longitude"] and not isinstance(value, (int, float)):
+                return {"error": f"{field.replace('_', ' ').capitalize()} must be a number"}, 400
 
-        place = Place(
-            title=place_data["title"],
-            description=place_data["description"],
-            price=place_data["price"],
-            latitude=place_data["latitude"],
-            longitude=place_data["longitude"],
-            owner=place_data["owner"],
-            amenities=place_data.get("amenities", [])
-            )
-        
+        # ✅ Vérifie que le prix n’est pas négatif
+        if place_data["price"] < 0:
+            return {"error": "Price cannot be negative"}, 400
+
+        # Si tout est bon, on crée la place
+        new_place = facade.create_place(place_data)
         return {
-            "id": place.id,
-            "title": place.title,
-            "description": place.description,
-            "price": place.price,
-            "latitude": place.latitude,
-            "longitude": place.longitude,
-            "owner_id": place.owner, 
-            "amenities": place.amenities,
-            "created_at": place.created_at.isoformat()
-            }, 201
+            "id": new_place.id,
+            "title": new_place.title,
+            "description": new_place.description,
+            "price": new_place.price,
+            "latitude": new_place.latitude,
+            "longitude": new_place.longitude,
+        }, 201
 
 
     @api.response(200, 'List of places retrieved successfully')

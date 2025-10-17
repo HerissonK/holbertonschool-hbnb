@@ -15,5 +15,7 @@ api.add_namespace(amenities_api, path='/api/v1/amenities')
 api.add_namespace(place_api, path='/api/v1/places')
 api.add_namespace(reviews_api, path='/api/v1/reviews')
 
+
+
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
