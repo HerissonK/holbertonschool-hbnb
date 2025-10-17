@@ -36,7 +36,8 @@ class UserList(Resource):
             "id": new_user.id,
             "first_name": new_user.first_name,
             "last_name": new_user.last_name,
-            "email": new_user.email
+            "email": new_user.email,
+            "created_at": new_user.created_at.isoformat()
         }, 201
 
 
@@ -73,7 +74,7 @@ class UserResource(Resource):
                 return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
 
         user = facade.get_user(user_id)
-        return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email}, 200
+        return {'id': user.id, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email, 'updated_at': user.updated_at.isoformat()}, 200
 
     @api.response(200, 'User deleted successfully')
     @api.response(404, 'User not found')

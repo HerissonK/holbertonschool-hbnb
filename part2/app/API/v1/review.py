@@ -42,7 +42,8 @@ class ReviewList(Resource):
             'text': new_review.text,
             'rating': new_review.rating,
             'user_id': new_review.user_id,
-            'place_id': new_review.place_id
+            'place_id': new_review.place_id,
+            'create_at': new_review.created_at.isoformat()
         }, 201
 
     @api.response(200, 'List of reviews retrieved successfully')
@@ -106,7 +107,8 @@ class ReviewResource(Resource):
             return {"error": "The comment should a text"}, 400
 
         return {
-                "message": "Review updated successfully"
+                "message": "Review updated successfully",
+                "updated_at": review.updated_at.isoformat()
         }, 201
 
     @api.response(200, 'Review deleted successfully')
