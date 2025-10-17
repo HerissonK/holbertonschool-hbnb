@@ -1,8 +1,6 @@
 from .core_model import BaseModel
 from datetime import datetime
 from typing import List, Optional, TYPE_CHECKING
-from .user import User
-from .review import Review
 import uuid
 
 # Imports uniquement pour le type checking (pas au runtime)
@@ -18,8 +16,8 @@ class Place(BaseModel):
         price: float,
         latitude: float,
         longitude: float,
-        owner: Optional[User] = None,
-        reviews: Optional[List[Review]] = None,
+        owner: Optional["User"] = None,
+        reviews: Optional[List["Review"]] = None,
         amenities: Optional[List[str]] = None,
         id: Optional[str] = None
     ):
@@ -34,7 +32,7 @@ class Place(BaseModel):
         self.reviews = reviews if reviews is not None else []
         self.amenities = amenities if amenities is not None else []
 
-    def add_review(self, review: Review):
+    def add_review(self, review: "Review"):
         """Add a review to the place."""
         self.reviews.append(review)
 
