@@ -1,9 +1,9 @@
 from .core_model import BaseModel
-from datetime import datetime
-import uuid
-from typing import Optional
 from .user import User
 from .place import Place
+from typing import Optional
+from datetime import datetime
+import uuid
 
 class Review(BaseModel):
     def __init__(self, text: str, rating: int, user: Optional[User] = None, place: Optional[Place] = None, id: Optional[str] = None):

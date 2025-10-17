@@ -1,3 +1,10 @@
-from app.services.facade import HBnBFacade
+"""
+Couche Services - Logique métier
+Dépend de la couche Persistance et Modèle
+"""
 
-facade = HBnBFacade()
+from .place_service import PlaceService
+from .user_service import UserService
+from .review_service import ReviewService
+
+__all__ = ['PlaceService', 'UserService', 'ReviewService']

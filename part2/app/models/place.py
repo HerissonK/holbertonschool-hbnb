@@ -1,9 +1,14 @@
 from .core_model import BaseModel
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 from .user import User
 from .review import Review
 import uuid
+
+# Imports uniquement pour le type checking (pas au runtime)
+if TYPE_CHECKING:
+    from .user import User
+    from .review import Review
 
 class Place(BaseModel):
     def __init__(

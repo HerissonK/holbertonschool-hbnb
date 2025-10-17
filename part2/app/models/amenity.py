@@ -1,6 +1,6 @@
 from .core_model import BaseModel
-from datetime import datetime
-
+import uuid
+from typing import Optional
 
 class Amenity(BaseModel):
     def __init__(self, name):
