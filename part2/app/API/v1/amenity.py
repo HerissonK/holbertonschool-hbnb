@@ -25,7 +25,7 @@ class AmenityList(Resource):
                 return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
 
         new_amenity = facade.create_amenity(amenity_data)
-        return {"id": new_amenity.id, "name": new_amenity.name}, 201
+        return {"id": new_amenity.id, "name": new_amenity.name, "created_at": new_amenity.created_at.isoformat()}, 201
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
@@ -56,4 +56,4 @@ class AmenityResource(Resource):
 
         amenity = facade.get_amenity(amenity_id)
 
-        return {'id': amenity.id, 'name': amenity.name}, 200
+        return {'id': amenity.id, 'name': amenity.name, 'updated_at': amenity.updated_at.isoformat()}, 200
