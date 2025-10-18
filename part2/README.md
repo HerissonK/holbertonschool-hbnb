@@ -1,85 +1,16 @@
-"""
-Point d'entrée de l'application
-Configure et assemble toutes les couches
-"""
-from flask import Flask
-from flask_restx import Api
+# 🌆 HBNB - Partie 2 : API REST & Architecture en Couches
+
+Hello ! \
+Bienvenue dans la **partie 2 de notre projet HBnB** (clone de AirBnB version Holberton). Ici nous sommes partie d'une **code base** et nous avons du **implémenter différents endpoints**, gérer les **bons retours http** et surtout **assurer une bonne communication** entre **chaque couche** (Presentation, Business Logic et Persistance)
 
 
-def create_app(config_name=None):
-    """
-    Factory pattern pour créer l'application Flask
-    
-    Args:
-        config_name: Nom de la configuration (development, production, testing)
-    
-    Returns:
-        app: Instance Flask configurée
-    """
-    app = Flask(__name__)
-    
-    # Configuration de l'application
-    app.config['RESTX_MASK_SWAGGER'] = False
-    app.config['ERROR_404_HELP'] = False
-    app.config['RESTX_VALIDATE'] = True
-    
-    # Créer l'API avec documentation Swagger
-    api = Api(
-        app,
-        version='1.0',
-        title='HBnB API',
-        description='HBnB Application API - Architecture en couches',
-        doc='/api/v1/docs',
-        prefix='/api/v1'
-    )
+Cette partie du projetnous fait passer du modèle objet à la création d’une **API RESTful complète avec Flask**.
+On met en place une **architecture en couches propre**, où chaque bloc a son rôle bien défini.
 
-    # Enregistrer les namespaces (Couche Présentation)
-    # Import ici pour éviter les imports circulaires
-    from app.API.v1.users import api as users_ns
-    from app.API.v1.places import api as places_ns
-    from app.API.v1.reviews import api as reviews_ns
-    from app.API.v1.amenities import api as amenities_ns
+## ⚙️ Architecture en Couches
 
-    # Ajouter les namespaces avec leurs chemins
-    api.add_namespace(users_ns, path='/users')
-    api.add_namespace(places_ns, path='/places')
-    api.add_namespace(reviews_ns, path='/reviews')
-    api.add_namespace(amenities_ns, path='/amenities')
 
-    return app
-```
-
-## **Structure complète avec le principe des couches :**
-```
-app/
-├── __init__.py                      # Point d'entrée - Assemblage
-│
-├── models/                          # COUCHE 1: Entités (pas de dépendances)
-│   ├── __init__.py
-│   ├── base_model.py
-│   ├── user.py
-│   ├── place.py
-│   ├── review.py
-│   └── amenity.py
-│
-├── persistence/                     # COUCHE 2: Accès données (dépend de models)
-│   ├── __init__.py
-│   └── repository.py
-│
-├── services/                        # COUCHE 3: Logique métier (dépend de persistence + models)
-│   ├── __init__.py
-│   └── facade.py
-│
-└── API/                             # COUCHE 4: Présentation (dépend de services)
-    └── v1/
-        ├── __init__.py
-        ├── users.py
-        ├── places.py
-        ├── reviews.py
-        └── amenities.py
-```
-
-## **Principe des dépendances (IMPORTANT) :**
+### **Principe des dépendances:**
 ```
 ┌─────────────────────────────────────┐
 │   API (Présentation)                │  ← Couche 4
@@ -94,13 +25,78 @@ app/
 └──────────────┬──────────────────────┘
                │ dépend de ↓
 ┌──────────────▼──────────────────────┐
-│   Persistence (Data Access)         │  ← Couche 2
+│   Persistence (Storage Layer)       │  ← Couche 2
 │   - Accès aux données               │
 │   - CRUD operations                 │
 └──────────────┬──────────────────────┘
                │ dépend de ↓
 ┌──────────────▼──────────────────────┐
 │   Models (Entities)                 │  ← Couche 1
-│   - Entités du domaine              │
+│   - Entités du domaine (ex: USER)   │
 │   - Pas de dépendances externes     │
 └─────────────────────────────────────┘
+```
+
+### 🗒️ *Point clé :*
+
+* Une couche ne doit jamais importer une couche située au-dessus d’elle.
+* Les imports suivent toujours le sens des flèches dans le schéma.
+
+    *Exemple :*
+
+    **api.v1.views.user** importe **models.user** \
+    **models.user** importe **BaseModel** \
+    **BaseModel** appelle **storage** pour la persistance \
+    mais **storage** ne connaît jamais **Flask**
+
+
+## 🌐 Endpoints disponibles
+🧑‍💼 **USER**
+```
+Méthode |	Endpoint           	 | Description
+GET	|    /api/v1/users	         | Liste tous les utilisateurs 
+GET     |    /api/v1/users/<user_id>     | Récupère un utilisateur 
+POST	|    /api/v1/users	         | Crée un nouvel utilisateur 
+PUT	|    /api/v1/users/<user_id>	 | Met à jour un utilisateur 
+DELETE	|    /api/v1/users/<user_id>	 | Supprime un utilisateur
+```
+
+
+🏡 **PLACE** 
+```
+Méthode |	Endpoint	        | Description
+GET 	|   /api/v1/places	        | Liste des lieux 
+GET	|   /api/v1/places/<place_id>	| Détail d’un lieu 
+POST    |   /api/v1/places	        | Création d’un lieu 
+PUT	|   /api/v1/places/<place_id>	| Mise à jour d’un lieu 
+DELETE	|   /api/v1/places/<place_id>   | Suppression d’un lieu
+```
+💬 *Chaque Place est lié à un User (propriétaire) et à une City.*
+
+⭐ **REVIEW**
+```
+Méthode   |	Endpoint                    | Description 
+GET       |  /api/v1/reviews	            | Liste des avis 
+POST	  |  /api/v1/reviews	            | Ajoute un avis 
+DELETE	  |  /api/v1/reviews/<review_id>    | Supprime un avis
+```
+
+🧴 **AMENITY**
+```
+Méthode	  |        Endpoint                 | Description
+GET	  | /api/v1/amenities	            | Liste des commodités
+POST	  | /api/v1/amenities	            | Ajoute une commodité
+PUT	  | /api/v1/amenities/<amenity_id>  | Met à jour une commodité
+DELETE	  | /api/v1/amenities/<amenity_id>  | Supprime une commodité
+```
+
+## 🤓 Notes Techniques
+
+ * Tous les retours sont au format JSON
+ * Les erreurs (404, 400) sont gérées proprement
+*  Blueprint utilisé pour séparer les routes par ressource
+
+
+
+### Équipe 🤜🏼🤛🏼: 
+Kevin et Arsinoé 
