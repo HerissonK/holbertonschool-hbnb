@@ -28,6 +28,9 @@ class HBnBFacade:
         return self.user_repo.update(user_id, user_data)
     def delete_user(self, user_id):
         return self.user_repo.delete(user_id)
+    def get_user_by_email(self, email: str) -> User | None:
+        return self.user_repo.get_by_attribute("email", email)
+
 
     #Amenity
     def create_amenity(self, amenity_data):

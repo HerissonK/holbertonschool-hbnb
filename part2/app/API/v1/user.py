@@ -75,3 +75,15 @@ class UserResource(Resource):
         if not deleted:
             return {'error': 'User not found'}, 404
         return {'message': 'User deleted'}, 200
+
+@api.route('/by_email/<string:email>')
+class UserByEmail(Resource):
+    @api.response(200, 'User details retrieved successfully')
+    @api.response(404, 'User not found')
+    def get(self, email):
+        """Get user details by email"""
+        user = facade.get_user_by_email(email)
+        if not user:
+            return {'error': 'User not found'}, 404
+        return user.to_dict(), 200
+
