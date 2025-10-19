@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
-from app.services import facade
+from app.models.user import User
+from app.services.facade import facade
 
 api = Namespace('users', description='User operations')
 

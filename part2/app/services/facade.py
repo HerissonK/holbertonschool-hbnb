@@ -4,6 +4,8 @@ from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
 
+
+
 class HBnBFacade:
     def __init__(self):
         self.user_repo = InMemoryRepository()
@@ -43,8 +45,16 @@ class HBnBFacade:
 
     # R E V I E W S 
     def create_review(self, review_data):
-    # Placeholder for logic to create a review, including validation for user_id, place_id, and rating
-        
+    # Vérification existence user
+        user = self.get_user(review_data['user_id'])
+        if not user:
+            raise ValueError("Invalid user_id")
+
+    # Vérification existence place
+        place = self.get_place(review_data['place_id'])
+        if not place:
+            raise ValueError("Invalid place_id")
+
         new_review = Review(
             text=review_data['text'],
             rating=review_data['rating'],
@@ -52,13 +62,15 @@ class HBnBFacade:
             place_id=review_data['place_id']
         )
 
+        # Ajouter la review à la place
+        place.add_review(new_review)
+
+        # Sauvegarder
         self.review_repo.add(new_review)
+        self.place_repo.update(place.id, place.to_dict())  # mettre à jour la place avec la review
 
         return new_review
 
-    def get_review(self, review_id):
-    # Placeholder for logic to retrieve a review by ID
-        return self.review_repo.get(review_id)
 
     def get_all_reviews(self):
     # Placeholder for logic to retrieve all reviews
@@ -81,6 +93,7 @@ class HBnBFacade:
 
 # Places
     def create_place(self, place_data):
+        owner = self.get_user(place_data.pop("owner_id"))
         place = Place(**place_data)
         self.place_repo.add(place)        
         return place
@@ -92,3 +105,5 @@ class HBnBFacade:
 
     def update_place(self, place_id, place_data):
         return self.place_repo.update(place_id, place_data)
+
+facade = HBnBFacade()

@@ -5,7 +5,6 @@ Assemble toutes les couches et configure Flask
 from flask import Flask
 from app.API import api_v1
 
-
 def create_app():
     """Factory pattern - crée et configure l’application Flask"""
     app = Flask(__name__)

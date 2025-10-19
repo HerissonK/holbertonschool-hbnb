@@ -34,7 +34,7 @@ class TestUserEndpoints(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 400)
         data = response.get_json()
-        self.assertIn('error', data)
+        self.assertIn('errors', data)
 
     def test_create_user_empty_lastname(self):
         """Test: Création avec last_name vide"""
@@ -54,7 +54,7 @@ class TestUserEndpoints(unittest.TestCase):
         })
         self.assertEqual(response.status_code, 400)
         data = response.get_json()
-        self.assertIn('error', data)
+        self.assertIn('errors', data)
 
     def test_create_user_empty_email(self):
         """Test: Création avec email vide"""

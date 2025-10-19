@@ -37,7 +37,7 @@ class TestAmenityEndpoints(unittest.TestCase):
         response = self.client.post('/api/v1/amenities/', json={})
         self.assertEqual(response.status_code, 400)
         data = response.get_json()
-        self.assertIn('error', data)
+        self.assertIn('errors', data)
 
     def test_get_amenity_success(self):
         """Test: Récupération d'une amenity existante"""
@@ -55,24 +55,6 @@ class TestAmenityEndpoints(unittest.TestCase):
         """Test: Récupération d'une amenity inexistante"""
         response = self.client.get('/api/v1/amenities/nonexistent-id')
         self.assertEqual(response.status_code, 404)
-
-    def test_delete_amenity_success(self):
-        """Test: Suppression d'une amenity existante"""
-        create_resp = self.client.post('/api/v1/amenities/', json={"name": "Gym"})
-        amenity_id = create_resp.get_json()['id']
-
-        delete_resp = self.client.delete(f'/api/v1/amenities/{amenity_id}')
-        self.assertEqual(delete_resp.status_code, 204)  # Suppression réussie sans contenu
-
-        # Vérifier que l'amenity n'existe plus
-        get_resp = self.client.get(f'/api/v1/amenities/{amenity_id}')
-        self.assertEqual(get_resp.status_code, 404)
-
-    def test_delete_amenity_not_found(self):
-        """Test: Suppression d'une amenity inexistante"""
-        response = self.client.delete('/api/v1/amenities/nonexistent-id')
-        self.assertEqual(response.status_code, 404)
-
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

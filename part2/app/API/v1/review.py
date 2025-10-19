@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from app.services import facade
+from app.services.facade import facade
 
 api = Namespace('reviews', description='Review operations')
 
@@ -20,28 +20,26 @@ class ReviewList(Resource):
         """Register a new review"""
         review_data = api.payload
 
-        # Champs obligatoires
+        # Vérification des champs obligatoires
         required_fields = ['user_id', 'place_id', 'text', 'rating']
         for field in required_fields:
             if field not in review_data or review_data[field] in ("", None):
                 return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
 
-        # Vérification rating
+        # Vérification du rating
         rating = review_data.get('rating')
         if not isinstance(rating, int) or not (1 <= rating <= 5):
             return {"error": "Rating must be an integer between 1 and 5"}, 400
 
-        new_review = facade.create_review(review_data)
+        # --- Gestion des erreurs de création ---
+        try:
+            new_review = facade.create_review(review_data)
+        except ValueError as e:
+            return {"error": str(e)}, 400
+
+        # Tout est OK → on retourne la review
         return new_review.to_dict(), 201
 
-    @api.response(200, 'List of reviews retrieved successfully')
-    def get(self):
-        """Retrieve a list of all reviews"""
-        list_reviews = facade.get_all_reviews()
-        if not list_reviews:
-            return {'error': 'Reviews not found!'}, 404
-
-        return [review.to_dict() for review in list_reviews], 200
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):

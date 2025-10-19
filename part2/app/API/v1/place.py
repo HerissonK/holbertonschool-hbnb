@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from app.services import facade
+from app.services.facade import facade
 
 api = Namespace('places', description='Place operations')
 
@@ -46,9 +46,15 @@ class PlaceList(Resource):
         for field in ["price", "latitude", "longitude"]:
             if not isinstance(place_data[field], (int, float)):
                 return {"error": f"{field.replace('_', ' ').capitalize()} must be a number"}, 400
+        
+        if not (-90 <= place_data["latitude"] <= 90):
+            return {"error": "Latitude must be between -90 and 90"}, 400
+
+        if not (-180 <= place_data["longitude"] <= 180):
+            return {"error": "Longitude must be between -180 and 180"}, 400
 
         # Prix positif
-        if place_data["price"] < 0:
+        if place_data["price"] <= 0:
             return {"error": "Price cannot be negative"}, 400
 
         # Vérifie si le owner existe
