@@ -3,6 +3,7 @@ from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
+from app import db
 
 class HBnBFacade:
     def __init__(self):
@@ -22,8 +23,13 @@ class HBnBFacade:
         return self.user_repo.get_by_attribute('email', email)
     def list_users(self):
         return self.user_repo.get_all()
-    def update_user(self, user_id, user_data):
-        return self.user_repo.update(user_id, user_data)
+    def update_user(self, user_id, data):
+        user = self.get_user(user_id)
+        if not user:
+            return None
+        user.update(data)
+        db.session.commit()
+        return user
     def delete_user(self, user_id):
         return self.user_repo.delete(user_id)
 
