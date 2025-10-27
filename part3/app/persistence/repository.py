@@ -26,7 +26,7 @@ class Repository(ABC):
         pass
 
 
-class InMemoryRepository(Repository):
+class Repository:
     def __init__(self):
         self._storage = {}
 

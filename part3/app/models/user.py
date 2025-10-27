@@ -1,15 +1,13 @@
-from .core_model import BaseModel
-from datetime import datetime
+from app import db  # ton instance SQLAlchemy
 import uuid
 
-from app.models.core_model import BaseModel
+class User(db.Model):
+    __tablename__ = "users"
 
-class User:
-    def __init__(self, first_name, last_name, email, id=None):
-        self.id = id or str(uuid.uuid4())
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    first_name = db.Column(db.String(128), nullable=False)
+    last_name = db.Column(db.String(128), nullable=False)
+    email = db.Column(db.String(128), unique=True, nullable=False)
 
     def update(self, data):
         for key, value in data.items():
