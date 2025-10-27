@@ -53,8 +53,16 @@ class PlaceList(Resource):
             return {"error": "Price cannot be negative"}, 400
 
         # ✅ Vérification latitude / longitude
-        if not isinstance(place_data["latitude"], (int, float)) or not isinstance(place_data["longitude"], (int, float)):
+        lat = place_data["latitude"]
+        lon = place_data["longitude"]
+        if not isinstance(lat, (int, float)) or not isinstance(lon, (int, float)):
             return {"error": "Latitude and longitude must be numbers"}, 400
+
+        # ✅ Vérification des valeurs valides
+        if not -90 <= lat <= 90:
+            return {"error": "Latitude must be between -90 and 90"}, 400
+        if not -180 <= lon <= 180:
+            return {"error": "Longitude must be between -180 and 180"}, 400
 
         # ✅ Vérification du propriétaire (user_id ou owner_id)
         owner_id = place_data.get("owner_id") or place_data.get("user_id")
@@ -65,10 +73,16 @@ class PlaceList(Resource):
         if not owner:
             return {"error": "Owner ID does not exist"}, 400
 
-        # ✅ Vérification des amenities (liste non vide)
-        amenities = place_data.get("amenities")
-        if not isinstance(amenities, list) or len(amenities) == 0:
-            return {"error": "Amenities must be a non-empty list"}, 400
+        # ✅ Vérification des amenities (existence)
+        amenities_ids = place_data.get("amenities", [])
+        if not isinstance(amenities_ids, list):
+            return {"error": "Amenities must be a list"}, 400
+
+        # Vérifier que chaque amenity existe
+        for amenity_id in amenities_ids:
+            amenity = facade.get_amenity(amenity_id)
+            if not amenity:
+                return {"error": f"Amenity with ID {amenity_id} does not exist"}, 400
 
         # ✅ Création du lieu
         place_data["owner_id"] = owner_id  # normalisation
@@ -99,7 +113,29 @@ class PlaceList(Resource):
                 'price': place.price,
                 'latitude': place.latitude,
                 'longitude': place.longitude,
-                'owner_id': getattr(place.owner, 'id', place.owner),
+                'owner_id': getattr(place.owner_id, 'id', place.owner_id),
                 'amenities': getattr(place, 'amenities', [])
             })
         return result, 200
+
+@api.route('/<string:place_id>')
+@api.param('place_id', 'The Place identifier')
+class PlaceDetail(Resource):
+    @api.response(200, 'Place retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Retrieve a place by its ID"""
+        place = facade.get_place(place_id)
+        if not place:
+            return {"error": "Place not found"}, 404
+
+        return {
+            "id": place.id,
+            "title": place.title,
+            "description": place.description,
+            "price": place.price,
+            "latitude": place.latitude,
+            "longitude": place.longitude,
+            "owner_id": getattr(place.owner_id, 'id', place.owner_id),
+            "amenities": getattr(place, 'amenities', [])
+        }, 200
