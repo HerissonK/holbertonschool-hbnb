@@ -1,29 +1,16 @@
-from .core_model import BaseModel
-from datetime import datetime
+from app import db  # ton instance SQLAlchemy
+import uuid
+from app.models.place_amenity import PlaceAmenity
 
+class Amenity(db.Model):
 
-class Amenity(BaseModel):
-    def __init__(self, name):
-        super().__init__()
-        self.name = name
+    __tablename__ = "amenities"
 
-def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name
-        }
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = db.Column(db.String(128), nullable=False)
 
-def create_amenity(self, amenity_data):
-    return self.amenity_repo.create(amenity_data)
-
-def get_amenity(self, amenity_id):
-    return self.amenity_repo.get(amenity_id)
-
-def get_all_amenities(self):
-    return self.amenity_repo.get_all()
-
-def update_amenity(self, amenity_id, amenity_data):
-    return self.amenity_repo.update(amenity_id, amenity_data)
-
-def delete_amenity(self, amenity_id):
-    return self.amenity_repo.delete(amenity_id)
+    place_amenities = db.relationship(
+        "PlaceAmenity",
+        back_populates="amenity",
+        cascade="all, delete-orphan"
+    )

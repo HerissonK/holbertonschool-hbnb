@@ -13,3 +13,6 @@ __pycache__/
 # VSCode / PyCharm
 .vscode/
 .idea/
+
+# DB locale
+instance/*.db

@@ -1,23 +1,26 @@
-from .core_model import BaseModel
-from datetime import datetime
+from app import db  # ton instance SQLAlchemy
+import uuid
+from app.models.place_amenity import PlaceAmenity
 
-class Place(BaseModel):
-    def __init__(self, title, description, price, latitude, longitude, owner_id, reviews=None, amenities=None):
-        super().__init__()
-        # self.__place_id = str(uuid.uuid4())
-        self.title = title
-        self.description = description
-        self.price = price
-        self.latitude = latitude
-        self.longitude = longitude
-        self.owner_id = owner_id # à verifier
-        self.reviews = reviews if reviews is not None else []
-        self.amenities = amenities if amenities is not None else []
+class Place(db.Model):
+    
+    __tablename__ = "places"
 
-    def add_review(self, review):
-        """Add a review to the place."""
-        self.reviews.append(review)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    title = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.String(128), nullable=False)
+    price = db.Column(db.Float(128), nullable=False)
+    latitude = db.Column(db.Float(128), nullable=False)
+    longitude = db.Column(db.Float(128), nullable=False)
+    owner_id = db.Column(db.String(128), nullable=False)
+    user_id = db.Column(db.String(128), nullable=False)
+
+    place_amenities = db.relationship(
+        "PlaceAmenity",
+        back_populates="place",
+        cascade="all, delete-orphan"
+    )
 
     def add_amenity(self, amenity):
-        """Add an amenity to the place."""
-        self.amenities.append(amenity)
+        pa = PlaceAmenity(place=self, amenity=amenity)
+        db.session.add(pa)
