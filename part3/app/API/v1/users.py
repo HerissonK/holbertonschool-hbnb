@@ -7,7 +7,8 @@ api = Namespace('users', description='User operations')
 user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
-    'email': fields.String(required=True, description='Email of the user')
+    'email': fields.String(required=True, description='Email of the user'),
+    'password': fields.String(required=True, description='Password for the user')
 })
 
 @api.route('/')
@@ -20,7 +21,7 @@ class UserList(Resource):
         user_data = api.payload
 
     # ✅ Vérification des champs requis
-        required_fields = ["first_name", "last_name", "email"]
+        required_fields = ["first_name", "last_name", "email", "password"]
         for field in required_fields:
             value = user_data.get(field, "").strip()
             if not value:

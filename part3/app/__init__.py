@@ -1,6 +1,10 @@
 from flask import Flask
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+
+# Initialisation de Bcrypt
+bcrypt = Bcrypt()
 
 # Initialisation de SQLAlchemy
 db = SQLAlchemy()
@@ -12,7 +16,7 @@ def create_app():
 
     # Initialiser SQLAlchemy avec l'app
     db.init_app(app)
-
+    bcrypt.init_app(app)
     # Créer l'API REST
     api = Api(app, version='1.0', title='HBnB API',
               description='HBnB Application API', doc='/api/v1/')
