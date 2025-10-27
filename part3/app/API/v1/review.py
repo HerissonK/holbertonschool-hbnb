@@ -55,8 +55,9 @@ class ReviewList(Resource):
 
         return [
             {
+                'id': review.id,
                 'text': review.text,
-                'rating': review.rating,
+                'rating': review.rating
             }
             for review in list_reviews
         ], 201
@@ -106,7 +107,8 @@ class ReviewResource(Resource):
             return {"error": "The comment should a text"}, 400
 
         return {
-                "message": "Review updated successfully"
+                "message": "Review updated successfully",
+                "updated_at": updated_review.updated_at
         }, 201
 
     @api.response(200, 'Review deleted successfully')
