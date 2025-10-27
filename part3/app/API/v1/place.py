@@ -81,7 +81,7 @@ class PlaceList(Resource):
             "price": new_place.price,
             "latitude": new_place.latitude,
             "longitude": new_place.longitude,
-            "owner_id": getattr(new_place.owner, 'id', new_place.owner),
+            "owner_id": getattr(new_place.owner_id, 'id', new_place.owner_id),
             "amenities": getattr(new_place, 'amenities', [])
         }, 201
 
