@@ -4,7 +4,6 @@ from app.services import facade
 
 api = Namespace('auth', description='Authentication operations')
 
-# Model for input validation
 login_model = api.model('Login', {
     'email': fields.String(required=True, description='User email'),
     'password': fields.String(required=True, description='User password')
@@ -14,25 +13,33 @@ login_model = api.model('Login', {
 class Login(Resource):
     @api.expect(login_model)
     def post(self):
-        """Authenticate user and return a JWT token"""
-        credentials = api.payload  # Get the email and password from the request payload
-        
-        # Step 1: Retrieve the user based on the provided email
-        user = facade.get_user_by_email(credentials['email'])
-        
-        # Step 2: Check if the user exists and the password is correct
-        if not user or not user.verify_password(credentials['password']):
+        """Authenticate user and return a JWT token for any user"""
+        credentials = api.payload
+        email = credentials.get('email')
+        password = credentials.get('password')
+
+        if not email or not password:
+            return {'error': 'Email and password are required'}, 400
+
+        # Récupérer l'utilisateur quel que soit son rôle
+        user = facade.get_user_by_email(email)
+
+        # Vérifie que l'utilisateur existe et que le mot de passe est correct
+        if not user or not user.verify_password(password):
             return {'error': 'Invalid credentials'}, 401
 
-        # Step 3: Create a JWT token with the user's id and is_admin flag
+        # Génère un JWT pour tout utilisateur (admin ou non)
         access_token = create_access_token(
-        identity=str(user.id),   # only user ID goes here
-        additional_claims={"is_admin": user.is_admin}  # extra info here
+            identity=user.id,  # doit être un int ou string
+            additional_claims={
+                "email": user.email,
+                "is_admin": user.is_admin
+            }
         )
-        
-        # Step 4: Return the JWT token to the client
+
         return {'access_token': access_token}, 200
-    
+
+
 
 @api.route('/protected')
 class ProtectedResource(Resource):

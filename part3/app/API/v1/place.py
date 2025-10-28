@@ -149,8 +149,18 @@ class PlaceDetail(Resource):
     @api.response(404, 'Place not found')
     @jwt_required()
     def put(self, place_id):
-        """Update an existing place"""
+        current_user = get_jwt_identity()
+        user_id = current_user.get("id")
+        is_admin = current_user.get("is_admin", False)
+
         place = facade.get_place(place_id)
+        if not place:
+            return {"error": "Place not found"}, 404
+
+    # 🚫 Vérifie la propriété, sauf si admin
+        if not is_admin and place.owner_id != user_id:
+            return {"error": "Unauthorized action"}, 403
+
         if not place:
             return {"error": "Place not found"}, 404
 

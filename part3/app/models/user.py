@@ -8,8 +8,8 @@ class User(db.Model):
     first_name = db.Column(db.String(128), nullable=False)
     last_name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True, nullable=False)
-    _password = db.Column("password", db.String(128), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False)
+    password = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
     def update(self, data):
         for key, value in data.items():
@@ -17,14 +17,14 @@ class User(db.Model):
                 setattr(self, key, value)
     
     @property
-    def password(self):
-        return self._password
+    def password_hash(self):
+        raise AttributeError("Password is write-only")
 
-    @password.setter
-    def password(self, plain_password):
+    @password_hash.setter
+    def password_hash(self, plain_password):
         """Hash automatiquement le mot de passe quand on le définit"""
-        self._password = bcrypt.generate_password_hash(plain_password).decode("utf-8")
+        self.password = bcrypt.generate_password_hash(plain_password).decode("utf-8")
 
     def verify_password(self, password):
-        """Vérifie si le mot de passe correspond au hash."""
-        return bcrypt.check_password_hash(self._password, password)
+        """Vérifie si le mot de passe correspond au hash"""
+        return bcrypt.check_password_hash(self.password, password)
