@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 api = Namespace('places', description='Place operations')
 
@@ -35,8 +36,10 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """Register a new place"""
+        current_user = get_jwt_identity()
         place_data = api.payload
 
         # ✅ Vérification des champs requis
@@ -138,4 +141,72 @@ class PlaceDetail(Resource):
             "longitude": place.longitude,
             "owner_id": getattr(place.owner_id, 'id', place.owner_id),
             "amenities": getattr(place, 'amenities', [])
+        }, 200
+
+    @api.expect(place_model)
+    @api.response(200, 'Place updated successfully')
+    @api.response(400, 'Invalid input data')
+    @api.response(404, 'Place not found')
+    @jwt_required()
+    def put(self, place_id):
+        """Update an existing place"""
+        place = facade.get_place(place_id)
+        if not place:
+            return {"error": "Place not found"}, 404
+
+        place_data = api.payload
+        if not place_data:
+            return {"error": "No data provided"}, 400
+
+        # Champs modifiables
+        allowed_fields = ["title", "description", "price", "latitude", "longitude", "owner_id", "user_id", "amenities"]
+        update_data = {k: v for k, v in place_data.items() if k in allowed_fields}
+
+        # Validation du prix
+        if "price" in update_data:
+            if not isinstance(update_data["price"], (int, float)):
+                return {"error": "Price must be a number"}, 400
+            if update_data["price"] < 0:
+                return {"error": "Price cannot be negative"}, 400
+
+        # Validation latitude / longitude
+        for coord in ["latitude", "longitude"]:
+            if coord in update_data:
+                if not isinstance(update_data[coord], (int, float)):
+                    return {"error": f"{coord.capitalize()} must be a number"}, 400
+                if coord == "latitude" and not -90 <= update_data[coord] <= 90:
+                    return {"error": "Latitude must be between -90 and 90"}, 400
+                if coord == "longitude" and not -180 <= update_data[coord] <= 180:
+                    return {"error": "Longitude must be between -180 and 180"}, 400
+
+        # Validation propriétaire
+        if "owner_id" in update_data or "user_id" in update_data:
+            owner_id = update_data.get("owner_id") or update_data.get("user_id")
+            owner = facade.get_user(owner_id)
+            if not owner:
+                return {"error": "Owner ID does not exist"}, 400
+            # normalisation user_id
+            update_data["owner_id"] = owner_id
+            update_data["user_id"] = owner_id
+
+        # Validation des amenities
+        if "amenities" in update_data:
+            if not isinstance(update_data["amenities"], list):
+                return {"error": "Amenities must be a list"}, 400
+            for amenity_id in update_data["amenities"]:
+                if not facade.get_amenity(amenity_id):
+                    return {"error": f"Amenity with ID {amenity_id} does not exist"}, 400
+
+        # Mise à jour
+        updated_place = facade.update_place(place_id, update_data)
+
+        return {
+            "id": updated_place.id,
+            "title": updated_place.title,
+            "description": updated_place.description,
+            "price": updated_place.price,
+            "latitude": updated_place.latitude,
+            "longitude": updated_place.longitude,
+            "owner_id": getattr(updated_place.owner_id, 'id', updated_place.owner_id),
+            "amenities": getattr(updated_place, 'amenities', [])
         }, 200
