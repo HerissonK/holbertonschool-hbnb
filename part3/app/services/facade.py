@@ -43,7 +43,13 @@ class HBnBFacade:
     def list_amenities(self):
         return self.amenity_repo.get_all()
     def update_amenity(self, amenity_id, data):
-        return self.amenity_repo.update(amenity_id, data)
+        amenity = self.amenity_repo.get(amenity_id)
+        if not amenity:
+            return None
+        for key, value in data.items():
+            setattr(amenity, key, value)
+        self.amenity_repo.update(amenity_id, data)  # ✅ correction ici
+        return amenity
     def delete_amenity(self, amenity_id):
         return self.amenity_repo.delete(amenity_id)
 
