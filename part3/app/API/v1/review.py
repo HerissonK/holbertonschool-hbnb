@@ -116,9 +116,7 @@ class ReviewResource(Resource):
         check_is_admin = get_jwt()
         is_admin = check_is_admin.get("is_admin", False)
 
-        review_data = api.payload
         updated_review = facade.update_review(review_id, review_data)
-
         if not updated_review:
             return {"error": "Review not found"}, 404
 
@@ -126,6 +124,7 @@ class ReviewResource(Resource):
         if not is_admin and updated_review.user_id != current_user:
             return {"error": "You can only modify your reviews"}, 403
 
+        review_data = api.payload
         allowed_fields = ["text", "rating"]
 
         # Validation des champs
