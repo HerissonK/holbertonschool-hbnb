@@ -15,11 +15,14 @@ class Place(db.Model):
     owner_id = db.Column(db.String(128), nullable=False)
     user_id = db.Column(db.String(128), nullable=False)
 
+    # One to Many relationship
     place_amenities = db.relationship(
         "PlaceAmenity",
         back_populates="place",
         cascade="all, delete-orphan"
     )
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     def add_amenity(self, amenity):
         pa = PlaceAmenity(place=self, amenity=amenity)

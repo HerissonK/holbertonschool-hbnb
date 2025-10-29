@@ -126,4 +126,3 @@ class HBnBFacade:
             setattr(place, key, value)
         db.session.commit()
         return place
-

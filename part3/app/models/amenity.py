@@ -9,6 +9,7 @@ class Amenity(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(128), nullable=False)
 
+    # One to Many relationship
     place_amenities = db.relationship(
         "PlaceAmenity",
         back_populates="amenity",

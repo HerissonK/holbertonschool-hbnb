@@ -11,6 +11,10 @@ class User(db.Model):
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
+    # One to Many relationship
+    places = db.relationship('Place', backref='owner', lazy=True)
+    reviews = db.relationship('Review', backref='author', lazy=True)
+
     def update(self, data):
         for key, value in data.items():
             if key != "id":
@@ -28,3 +32,5 @@ class User(db.Model):
     def verify_password(self, password):
         """Vérifie si le mot de passe correspond au hash"""
         return bcrypt.check_password_hash(self.password, password)
+
+    

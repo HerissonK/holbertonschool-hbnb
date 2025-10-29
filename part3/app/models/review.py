@@ -16,5 +16,5 @@ class Review(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    user = db.relationship("User", backref="reviews", lazy=True)
+    # One to Many relationship
     place = db.relationship("Place", backref="reviews", lazy=True)
