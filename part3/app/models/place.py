@@ -15,6 +15,7 @@ class Place(db.Model):
     owner_id = db.Column(db.String(128), nullable=False)
     user_id = db.Column(db.String(128), nullable=False)
 
+    # One to Many relationship
     place_amenities = db.relationship(
         "PlaceAmenity",
         back_populates="place",

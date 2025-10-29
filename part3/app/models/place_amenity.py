@@ -8,5 +8,6 @@ class PlaceAmenity(db.Model):
     place_id = db.Column(db.String(36), db.ForeignKey("places.id"), nullable=False)
     amenity_id = db.Column(db.String(36), db.ForeignKey("amenities.id"), nullable=False)
 
+    # One to Many relationship
     place = db.relationship("Place", back_populates="place_amenities")
     amenity = db.relationship("Amenity", back_populates="place_amenities")
