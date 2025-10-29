@@ -31,3 +31,8 @@ class SQLAlchemyRepository(Repository):
 
     def get_by_attribute(self, attr_name, attr_value):
         return self.model.query.filter(getattr(self.model, attr_name) == attr_value).first()
+
+    # Review
+    def get_by_user_and_place(self, user_id, place_id):
+        """Find a review by a given user for a given place"""
+        return self.model.query.filter_by(user_id=user_id, place_id=place_id).first()
