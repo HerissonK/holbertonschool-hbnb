@@ -43,7 +43,13 @@ class HBnBFacade:
     def list_amenities(self):
         return self.amenity_repo.get_all()
     def update_amenity(self, amenity_id, data):
-        return self.amenity_repo.update(amenity_id, data)
+        amenity = self.amenity_repo.get(amenity_id)
+        if not amenity:
+            return None
+        for key, value in data.items():
+            setattr(amenity, key, value)
+        self.amenity_repo.update(amenity_id, data)  # ✅ correction ici
+        return amenity
     def delete_amenity(self, amenity_id):
         return self.amenity_repo.delete(amenity_id)
 
@@ -101,6 +107,8 @@ class HBnBFacade:
 
 # Places
     def create_place(self, place_data):
+        if "user_id" not in place_data or not place_data["user_id"]:
+            place_data["user_id"] = place_data["owner_id"]
         place = Place(**place_data)
         self.place_repo.add(place)        
         return place
@@ -110,5 +118,12 @@ class HBnBFacade:
     def get_all_places(self):
         return self.place_repo.get_all()
 
-    def update_place(self, place_id, place_data):
-        return self.place_repo.update(place_id, place_data)
+    def update_place(self, place_id, data):
+        place = self.get_place(place_id)
+        if not place:
+            return None
+        for key, value in data.items():
+            setattr(place, key, value)
+        db.session.commit()
+        return place
+

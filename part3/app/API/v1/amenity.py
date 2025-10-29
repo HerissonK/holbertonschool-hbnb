@@ -1,64 +1,94 @@
+from flask import request
 from flask_restx import Namespace, Resource, fields
-from app.services import facade
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.services.facade import HBnBFacade
 
-api = Namespace('amenities', description='Amenity operations')
+# Initialisation
+api = Namespace('amenity', description='Amenity related operations')
+facade = HBnBFacade()
 
-# Define the amenity model for input validation and documentation
+# Schéma de données attendu pour une amenity
 amenity_model = api.model('Amenity', {
-    'name': fields.String(required=True, description='Name of the amenity')
+    'name': fields.String(required=True, description='Nom de l\'amenity')
 })
 
+
 @api.route('/')
-class AmenityList(Resource):
-    @api.expect(amenity_model)
-    @api.response(201, 'Amenity successfully created')
-    @api.response(400, 'Invalid input data')
-    def post(self):
-        """Register a new amenity"""  
-        amenity_data = api.payload
-        required_fields = ["name"]
+class AmenityListResource(Resource):
+    """Routes pour gérer la liste des amenities"""
 
-        for field in required_fields:
-            value = amenity_data.get(field, "").strip()
-            if not value:
-                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
-
-        new_amenity = facade.create_amenity(amenity_data)
-        return {"id": new_amenity.id, "name": new_amenity.name}, 201
-
-    # ✅ Ajoute bien cette méthode :
-    @api.response(200, 'List of amenities retrieved successfully')
+    @api.marshal_list_with(amenity_model)
     def get(self):
-        """Get all amenities"""
-        amenities = facade.list_amenities()
-        return [{'id': a.id, 'name': a.name} for a in amenities], 200
+        """Récupère la liste de toutes les amenities"""
+        return facade.list_amenities()
 
-@api.route('/<amenity_id>')
+    @jwt_required()
+    @api.expect(amenity_model)
+    @api.response(201, 'Amenity créée avec succès')
+    @api.response(403, 'Accès réservé aux administrateurs')
+    def post(self):
+        """Crée une nouvelle amenity (admin uniquement)"""
+        user_id = get_jwt_identity()
+        current_user = facade.user_repo.get(user_id)
+
+        if not current_user or not getattr(current_user, "is_admin", False):
+            return {"error": "Admin privileges required"}, 403
+
+        data = request.get_json()
+        new_amenity = facade.create_amenity(data)
+        return {"message": "Amenity créée avec succès", "id": new_amenity.id}, 201
+
+
+@api.route('/<string:amenity_id>')
+@api.param('amenity_id', 'ID de l\'amenity')
 class AmenityResource(Resource):
-    @api.response(200, 'Amenity details retrieved successfully')
-    @api.response(404, 'Amenity not found')
+    """Routes pour gérer une amenity spécifique"""
+
+    @api.marshal_with(amenity_model)
+    @api.response(404, 'Amenity introuvable')
     def get(self, amenity_id):
-        """Get amenity details by ID"""
+        """Récupère une amenity spécifique"""
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
-            return {'error': 'Amenity not found'}, 404
-        return {'id': amenity.id, 'name': amenity.name}, 200
+            return {"error": "Amenity not found"}, 404
+        return amenity
 
-    @api.response(200, 'Amenity updated successfully')
-    @api.response(404, 'Amenity not found')
-    @api.response(400, 'Invalid input data')
+    @jwt_required()
+    @api.expect(amenity_model)
+    @api.response(200, 'Amenity mise à jour avec succès')
+    @api.response(403, 'Accès réservé aux administrateurs')
+    @api.response(404, 'Amenity introuvable')
     def put(self, amenity_id):
-        """Update an amenity's information"""
-        amenity_data = api.payload
-        updated = facade.update_amenity(amenity_id, amenity_data)
-        if not updated:
-            return {'error': 'Amenity not found'}, 404
+        """Met à jour une amenity (admin uniquement)"""
+        user_id = get_jwt_identity()
+        current_user = facade.user_repo.get(user_id)
 
-    # Vérification du remplissage de tous les champs
-        required_fields = ['name']  # pas besoin de 'id', on le prend depuis l'URL
-        for field in required_fields:
-            if field not in amenity_data or amenity_data[field] in ("", None):
-                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+        if not current_user or not getattr(current_user, "is_admin", False):
+            return {"error": "Admin privileges required"}, 403
+
+        data = request.get_json()
+        updated = facade.update_amenity(amenity_id, data)
+
+        if not updated:
+            return {"error": "Amenity not found"}, 404
+
+        return {"message": "Amenity mise à jour avec succès"}, 200
+
+    @jwt_required()
+    @api.response(200, 'Amenity supprimée avec succès')
+    @api.response(403, 'Accès réservé aux administrateurs')
+    @api.response(404, 'Amenity introuvable')
+    def delete(self, amenity_id):
+        """Supprime une amenity (admin uniquement)"""
+        user_id = get_jwt_identity()
+        current_user = facade.user_repo.get(user_id)
+
+        if not current_user or not getattr(current_user, "is_admin", False):
+            return {"error": "Admin privileges required"}, 403
 
         amenity = facade.get_amenity(amenity_id)
-        return {'id': amenity.id, 'name': amenity.name}, 200
+        if not amenity:
+            return {"error": "Amenity not found"}, 404
+
+        facade.delete_amenity(amenity_id)
+        return {"message": "Amenity supprimée avec succès"}, 200

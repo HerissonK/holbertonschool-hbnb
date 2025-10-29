@@ -32,6 +32,7 @@ def create_app():
     from app.API.v1.amenity import api as amenities_ns
     from app.API.v1.review import api as reviews_ns
     from app.API.v1.auth import api as auth_ns
+    from app.API.v1.admin import api as admin_ns
 
     # Ajouter les namespaces à l'API
     api.add_namespace(users_ns, path='/api/v1/users')
@@ -39,5 +40,6 @@ def create_app():
     api.add_namespace(amenities_ns, path='/api/v1/amenities')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(auth_ns, path='/api/v1/auth')
+    api.add_namespace(admin_ns, path="/api/v1/admin")
 
     return app
