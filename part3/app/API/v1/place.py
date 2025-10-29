@@ -24,9 +24,7 @@ place_model = api.model('Place', {
     'price': fields.Float(required=True, description='Price per night'),
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
-    # ✅ on accepte aussi user_id pour compatibilité
     'owner_id': fields.String(description='ID of the owner'),
-    'user_id': fields.String(description='Alternative ID of the owner (user)'),
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
