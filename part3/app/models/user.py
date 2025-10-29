@@ -14,6 +14,7 @@ class User(db.Model):
     # One to Many relationship
     places = db.relationship('Place', backref='owner', lazy=True)
     reviews = db.relationship('Review', backref='author', lazy=True)
+
     def update(self, data):
         for key, value in data.items():
             if key != "id":

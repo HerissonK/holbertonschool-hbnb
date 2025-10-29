@@ -22,6 +22,8 @@ class Place(db.Model):
         cascade="all, delete-orphan"
     )
 
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
     def add_amenity(self, amenity):
         pa = PlaceAmenity(place=self, amenity=amenity)
         db.session.add(pa)
