@@ -60,8 +60,8 @@ class HBnBFacade:
         new_review = Review(
             text=review_data['text'],
             rating=review_data['rating'],
-            user_id=review_data['user_id'],
-            place_id=review_data['place_id']
+            place_id=review_data['place_id'],
+            user_id=review_data['user_id'] 
         )
 
         self.review_repo.add(new_review)
@@ -84,11 +84,25 @@ class HBnBFacade:
     def update_review(self, review_id, review_data):
     # Placeholder for logic to update a review
         review = self.review_repo.get(review_id)
-        return self.review_repo.update(review_id, review_data)
+        if not review:
+            return None  
+        # Mettre à jour les champs autorisés
+        allowed_fields = ["text", "rating"]
+        for field in allowed_fields:
+            if field in review_data:
+                setattr(review, field, review_data[field])
+
+        # Sauvegarder dans la DB
+        self.review_repo.add(review)
+        return review
 
     def delete_review(self, review_id):
     # Placeholder for logic to delete a review
         return self.review_repo.delete(review_id)
+
+    def get_review_by_user_and_place(self, user_id, place_id):
+        """Return the review written by this user for a given place, if any."""
+        return self.review_repo.get_by_user_and_place(user_id, place_id)
 
 
 # Places

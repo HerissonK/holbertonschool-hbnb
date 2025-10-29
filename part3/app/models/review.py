@@ -1,15 +1,20 @@
-from .core_model import BaseModel
+from app import db
 from datetime import datetime
+import uuid
 
 
-class Review(BaseModel):
-    def __init__(self, text, rating, user_id, place_id):
-        super().__init__()
-        # self.__place_id = str(uuid.uuid4())
-        self.text = text
-        self.rating = rating
-        #self.date_creation = date_creation BONUS revoir l'utilitée
-        self.user_id = user_id
-        self.place_id = place_id
-        #self.created_at = datetime.now()
-        #self.updated_at = datetime.now()
+class Review(db.Model):
+
+    __tablename__ = "reviews"
+
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    text = db.Column(db.Text, nullable=True)
+    rating = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey("users.id"), nullable=False)
+    place_id = db.Column(db.String(36), db.ForeignKey("places.id"), nullable=False)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = db.relationship("User", backref="reviews", lazy=True)
+    place = db.relationship("Place", backref="reviews", lazy=True)

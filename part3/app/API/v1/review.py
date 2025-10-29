@@ -1,6 +1,7 @@
 # SAVING DE REVIEW API 
 
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 
 api = Namespace('reviews', description='Review operations')
@@ -18,13 +19,22 @@ class ReviewList(Resource):
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """Register a new review"""
         # Placeholder for the logic to register a new review
         review_data = api.payload
-        new_review = facade.create_review(review_data)
+        current_user = get_jwt_identity()
 
-        required_fields = ['user_id', 'place_id', 'rating']
+        place_id = review_data.get("place_id")
+        place = facade.get_place(place_id)
+        if not place:
+            return {"error": "Place not found"}, 404
+
+        required_fields = ['place_id', 'rating']
+        for field in required_fields:
+            if field not in review_data or review_data[field] in ("", None):
+                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
 
         rating = review_data.get('rating')
         if rating in ("", None):
@@ -33,10 +43,22 @@ class ReviewList(Resource):
         if not isinstance(rating, int) or not (1 <= rating <= 5):
             return {"error": "Rating must be an integer between 1 and 5"}, 400
 
-        for field in required_fields:
-            if field not in review_data or review_data[field] in ("", None):
-                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+        # Check if the user review it own place
+        if place.user_id == current_user:
+            return {"error": "You cannot review your own place"}, 403
+
+        # Check if the user already rates this place
+        already_review = facade.get_review_by_user_and_place(current_user, place.id)
+        if already_review:
+            return {"error": "You have already reviewed this place"}, 409
         
+        new_review = facade.create_review({
+            "user_id": current_user,
+            "place_id": place.id,
+            "rating": rating,
+            "text": review_data.get("text", "")
+        })
+
         return {
             'id': new_review.id,
             'text': new_review.text,
@@ -86,42 +108,70 @@ class ReviewResource(Resource):
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def put(self, review_id):
         """Update a review's information"""
         # Placeholder for the logic to update a review by ID
-        data_review = api.payload
-        updated_review = facade.update_review(review_id, data_review)
+        current_user = get_jwt_identity()
+        check_is_admin = get_jwt()
+        is_admin = check_is_admin.get("is_admin", False)
+
+        updated_review = facade.update_review(review_id, review_data)
         if not updated_review:
             return {"error": "Review not found"}, 404
 
-        required_fields = ['user_id', 'place_id', 'text']
-        for field in required_fields:
-            if field not in data_review or data_review[field] in ("", None):
-                return {"error": f"{field.replace('_', ' ').capitalize()} is required"}, 400
+        # Check ownership if not admin
+        if not is_admin and updated_review.user_id != current_user:
+            return {"error": "You can only modify your reviews"}, 403
 
-        text = data_review.get('text')
+        review_data = api.payload
+        allowed_fields = ["text", "rating"]
+
+        # Validation des champs
+        if "rating" in review_data:
+            rating = review_data["rating"]
+            if not isinstance(rating, int) or not (1 <= rating <= 5):
+                return {"error": "Rating must be an integer between 1 and 5"}, 400
+
+        text = review_data.get("text", "")
         if text in ("", None):
             return {"error": "Comment is required"}, 400
 
         if not isinstance(text, str):
-            return {"error": "The comment should a text"}, 400
+            return {"error": "The comment should be a text"}, 400
+
+        # Mise à jour de l’objet
+        for field in allowed_fields:
+            if field in review_data:
+                setattr(updated_review, field, review_data[field])
+
+        facade.review_repo.add(updated_review)
 
         return {
                 "message": "Review updated successfully",
-                "updated_at": updated_review.updated_at
-        }, 201
+                "updated_at": updated_review.updated_at.isoformat()
+            }, 200
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def delete(self, review_id):
         """Delete a review"""
         # Placeholder for the logic to delete a review
-        review = api.payload
-        if not review:
-            {"message": "Review not found"}
+        current_user = get_jwt_identity()
+        check_is_admin = get_jwt()
+        is_admin = check_is_admin.get("is_admin", False)
 
-        review_to_delete = facade.delete_review(review_id)
+        review = api.payload
+
+        if not review:
+            return {"error": "Review not found"}, 404
+
+        if not is_admin and review["user_id"] != current_user:
+            return {"error": "You can only delete your own reviews"}, 403
+
+        facade.delete_review(review_id)
         return {
             "message": "Review deleted successfully"
         }, 200
