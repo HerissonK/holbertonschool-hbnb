@@ -8,7 +8,7 @@ class User(db.Model):
     first_name = db.Column(db.String(128), nullable=False)
     last_name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True, nullable=False)
-    password = db.Column(db.String(128), nullable=False)
+    _password = db.Column(db.String(128), name='password', nullable=False)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
     # One to Many relationship
@@ -19,18 +19,19 @@ class User(db.Model):
         for key, value in data.items():
             if key != "id":
                 setattr(self, key, value)
-    
-    @property
-    def password_hash(self):
-        raise AttributeError("Password is write-only")
 
-    @password_hash.setter
-    def password_hash(self, plain_password):
+    @property
+    def password(self):
+        """Empêche la lecture du mot de passe"""
+        return self._password
+
+    @password.setter
+    def password(self, plain_password):
         """Hash automatiquement le mot de passe quand on le définit"""
-        self.password = bcrypt.generate_password_hash(plain_password).decode("utf-8")
+        hashed = bcrypt.generate_password_hash(plain_password)
+        # Compatible toutes versions de flask-bcrypt
+        self._password = hashed.decode('utf-8') if isinstance(hashed, bytes) else hashed
 
     def verify_password(self, password):
         """Vérifie si le mot de passe correspond au hash"""
-        return bcrypt.check_password_hash(self.password, password)
-
-    
+        return bcrypt.check_password_hash(self._password, password)
