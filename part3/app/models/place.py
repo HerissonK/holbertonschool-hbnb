@@ -24,6 +24,11 @@ class Place(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
+    @property
+    def amenities(self):
+        """Retourne la liste des Amenity liées via PlaceAmenity"""
+        return [pa.amenity for pa in self.place_amenities]
+    
     def add_amenity(self, amenity):
         pa = PlaceAmenity(place=self, amenity=amenity)
         db.session.add(pa)

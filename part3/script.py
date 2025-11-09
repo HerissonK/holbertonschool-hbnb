@@ -1,12 +1,17 @@
 from app import create_app, db
 from app.models.user import User
 from app.models.amenity import Amenity
+import uuid
 
 # Initialisation de l'app Flask et du contexte
 app = create_app()
 
 with app.app_context():
     print("🔄 Initialisation du contexte Flask...")
+
+    # === Création des tables si elles n'existent pas ===
+    db.create_all()
+    print("📦 Tables créées (si manquantes).")
 
     # ===== 1️⃣ SUPPRESSION DE L'ANCIEN ADMIN =====
     old_admin = User.query.filter_by(email="admin@hbnb.com").first()
@@ -24,27 +29,26 @@ with app.app_context():
         last_name="Admin",
         is_admin=True
     )
-    admin.password = "admin123"  # Setter qui hash le mot de passe
+    admin.password = "admin123"  # setter qui hash le mot de passe
     db.session.add(admin)
     db.session.commit()
-
     print(f"✅ Nouvel admin créé : {admin.email} (id={admin.id})")
 
-    # ===== 3️⃣ AJOUT DE 3 AMENITIES =====
-    amenities = [
-        Amenity(name="Wi-Fi"),
-        Amenity(name="Piscine"),
-        Amenity(name="Parking gratuit")
+    # ===== 3️⃣ AJOUT DE 3 AMENITIES AVEC ID =====
+    amenities_data = [
+        {"id": str(uuid.uuid4()), "name": "Wi-Fi"},
+        {"id": str(uuid.uuid4()), "name": "Piscine"},
+        {"id": str(uuid.uuid4()), "name": "Parking gratuit"},
     ]
 
-    for amenity in amenities:
-        # éviter les doublons
-        existing = Amenity.query.filter_by(name=amenity.name).first()
+    for data in amenities_data:
+        existing = Amenity.query.filter_by(name=data["name"]).first()
         if not existing:
+            amenity = Amenity(id=data["id"], name=data["name"])
             db.session.add(amenity)
-            print(f"➕ Ajout de l'amenity : {amenity.name}")
+            print(f"➕ Ajout de l'amenity : {data['name']} (id={data['id']})")
         else:
-            print(f"⚠️ Amenity '{amenity.name}' existe déjà, ignorée.")
+            print(f"⚠️ Amenity '{data['name']}' existe déjà, ignorée.")
 
     db.session.commit()
     print("✅ 3 amenities ajoutées avec succès.")

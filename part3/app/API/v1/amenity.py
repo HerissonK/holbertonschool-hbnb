@@ -9,6 +9,7 @@ facade = HBnBFacade()
 
 # Schéma de données attendu pour une amenity
 amenity_model = api.model('Amenity', {
+    'id': fields.String(readonly=True, description='Identifiant unique de l\'amenity'),
     'name': fields.String(required=True, description='Nom de l\'amenity')
 })
 

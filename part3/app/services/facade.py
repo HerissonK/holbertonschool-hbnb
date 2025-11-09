@@ -3,6 +3,7 @@ from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.place import Place
 from app.models.review import Review
+from app.models.place_amenity import PlaceAmenity
 from app import db
 
 class HBnBFacade:
@@ -107,11 +108,23 @@ class HBnBFacade:
 
 # Places
     def create_place(self, place_data):
+        # Associer le user
         if "user_id" not in place_data or not place_data["user_id"]:
             place_data["user_id"] = place_data["owner_id"]
+
+        amenities_ids = place_data.pop("amenities", [])
         place = Place(**place_data)
-        self.place_repo.add(place)        
+        self.place_repo.add(place)
+
+        # Créer les liens PlaceAmenity
+        for amenity_id in amenities_ids:
+            amenity = self.amenity_repo.get(amenity_id)
+            if amenity:
+                pa = PlaceAmenity(place_id=place.id, amenity_id=amenity.id)
+                db.session.add(pa)
+        db.session.commit()
         return place
+
     def get_place(self, place_id):
         return self.place_repo.get(place_id)
 

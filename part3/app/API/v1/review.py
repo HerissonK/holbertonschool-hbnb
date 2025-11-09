@@ -111,23 +111,25 @@ class ReviewResource(Resource):
     @jwt_required()
     def put(self, review_id):
         """Update a review's information"""
-        # Placeholder for the logic to update a review by ID
         current_user = get_jwt_identity()
         check_is_admin = get_jwt()
         is_admin = check_is_admin.get("is_admin", False)
 
-        updated_review = facade.update_review(review_id, review_data)
+        # ✅ On récupère d'abord le body
+        review_data = api.payload
+
+        # ✅ On récupère ensuite la review existante
+        updated_review = facade.get_review(review_id)
         if not updated_review:
             return {"error": "Review not found"}, 404
 
-        # Check ownership if not admin
+        # ✅ Vérifie que l’utilisateur est bien le propriétaire ou admin
         if not is_admin and updated_review.user_id != current_user:
             return {"error": "You can only modify your reviews"}, 403
 
-        review_data = api.payload
+        # ✅ Validation des champs
         allowed_fields = ["text", "rating"]
 
-        # Validation des champs
         if "rating" in review_data:
             rating = review_data["rating"]
             if not isinstance(rating, int) or not (1 <= rating <= 5):
@@ -136,21 +138,22 @@ class ReviewResource(Resource):
         text = review_data.get("text", "")
         if text in ("", None):
             return {"error": "Comment is required"}, 400
-
         if not isinstance(text, str):
             return {"error": "The comment should be a text"}, 400
 
-        # Mise à jour de l’objet
+        # ✅ Mise à jour des champs autorisés
         for field in allowed_fields:
             if field in review_data:
                 setattr(updated_review, field, review_data[field])
 
+        # ✅ Sauvegarde dans la base via le repo
         facade.review_repo.add(updated_review)
 
         return {
-                "message": "Review updated successfully",
-                "updated_at": updated_review.updated_at.isoformat()
-            }, 200
+            "message": "Review updated successfully",
+            "updated_at": updated_review.updated_at.isoformat()
+        }, 200
+
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')

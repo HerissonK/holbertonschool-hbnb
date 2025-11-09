@@ -40,7 +40,7 @@ class UserList(Resource):
             return {"error": "Email already in use"}, 400
 
         # Hash password
-        user_data["password"] = bcrypt.generate_password_hash(user_data["password"]).decode("utf-8")
+        user_data["password"] = user_data["password"]
 
         new_user = facade.create_user(user_data)
 
@@ -56,6 +56,8 @@ class UserList(Resource):
     def get(self):
         """List all users"""
         users = facade.list_users()
+        print("DEBUG USERS:", [(u.id, u.email) for u in users])
+
         return [
             {'id': u.id, 'first_name': u.first_name, 'last_name': u.last_name, 'email': u.email}
             for u in users

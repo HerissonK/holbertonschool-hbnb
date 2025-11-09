@@ -11,35 +11,36 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hbnb.db'  # Exemple : SQLite, modifie selon ton usage
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hbnb.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    # Clé secrète utilisée pour signer les JWT (et sécuriser Flask)
-    app.config['SECRET_KEY'] = 'super-secret-key'  # 🔒 À remplacer par une vraie clé en prod
+    app.config['SECRET_KEY'] = 'super-secret-key'
     app.config['JWT_SECRET_KEY'] = app.config['SECRET_KEY']
 
-    # Initialiser SQLAlchemy avec l'app
+    # Initialisation des extensions
     jwt.init_app(app)
     db.init_app(app)
     bcrypt.init_app(app)
-    # Créer l'API REST
+
+    # Création de l'API principale
     api = Api(app, version='1.0', title='HBnB API',
               description='HBnB Application API', doc='/api/v1/')
 
-    # Importer les namespaces ici pour éviter les imports circulaires
+    # Import des namespaces RESTX
     from app.API.v1.users import api as users_ns
     from app.API.v1.place import api as places_ns
     from app.API.v1.amenity import api as amenities_ns
     from app.API.v1.review import api as reviews_ns
     from app.API.v1.auth import api as auth_ns
     from app.API.v1.admin import api as admin_ns
+    from app.API.v1.debug import api as debug_ns
 
-    # Ajouter les namespaces à l'API
+    # Enregistrement des namespaces
     api.add_namespace(users_ns, path='/api/v1/users')
     api.add_namespace(places_ns, path='/api/v1/places')
     api.add_namespace(amenities_ns, path='/api/v1/amenities')
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
     api.add_namespace(auth_ns, path='/api/v1/auth')
-    api.add_namespace(admin_ns, path="/api/v1/admin")
+    api.add_namespace(admin_ns, path='/api/v1/admin')
+    api.add_namespace(debug_ns, path='/api/v1/debug')  # ✅ Ajouté ici
 
     return app
