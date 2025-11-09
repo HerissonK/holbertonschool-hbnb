@@ -21,6 +21,7 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
+
 @api.route('/')
 class PlaceList(Resource):
     @api.expect(place_model)
@@ -30,18 +31,32 @@ class PlaceList(Resource):
         current_user_id = get_jwt_identity()
         claims = get_jwt()
         is_admin = claims.get("is_admin", False)
-        place_data = api.payload
+        place_data = api.payload or {}
 
-        # Vérifications des champs requis
+        # Vérification des champs requis
         required_fields = ["title", "price", "latitude", "longitude"]
         for field in required_fields:
             if field not in place_data or place_data[field] in [None, ""]:
                 return {"error": f"{field} is required"}, 400
 
+        # Vérification de la latitude / longitude
+        latitude = place_data["latitude"]
+        longitude = place_data["longitude"]
+
+        if not (-90 <= latitude <= 90):
+            return {"error": "latitude out of range (-90 à 90)"}, 400
+        if not (-180 <= longitude <= 180):
+            return {"error": "longitude out of range (-180 à 180)"}, 400
+
+        # Vérifie le prix
         if place_data["price"] < 0:
             return {"error": "Price cannot be negative"}, 400
 
+        # Vérifie le propriétaire (règle admin vs user)
         owner_id = place_data.get("owner_id") or current_user_id
+        if not is_admin and owner_id != current_user_id:
+            return {"error": "You can only create places for yourself"}, 403
+
         owner = facade.get_user(owner_id)
         if not owner:
             return {"error": "Owner ID does not exist"}, 400
@@ -55,10 +70,11 @@ class PlaceList(Resource):
                 return {"error": f"Amenity with ID {amenity_id} does not exist"}, 400
             amenities_objs.append(amenity)
 
+        # Création du lieu
         place_data["owner_id"] = owner_id
         new_place = facade.create_place(place_data)
 
-        # Associer les amenities
+        # Association des amenities
         new_place.amenities.extend(amenities_objs)
         db.session.commit()
 
@@ -97,6 +113,7 @@ class PlaceDetail(Resource):
     @api.response(200, 'Place retrieved successfully')
     @api.response(404, 'Place not found')
     def get(self, place_id):
+        """Retrieve a place by ID"""
         place = facade.get_place(place_id)
         if not place:
             return {"error": "Place not found"}, 404
@@ -115,6 +132,7 @@ class PlaceDetail(Resource):
     @api.expect(place_model)
     @jwt_required()
     def put(self, place_id):
+        """Update a place (owner or admin only)"""
         current_user_id = get_jwt_identity()
         claims = get_jwt()
         is_admin = claims.get("is_admin", False)
@@ -131,13 +149,18 @@ class PlaceDetail(Resource):
         allowed_fields = ["title", "description", "price", "latitude", "longitude", "owner_id", "amenities"]
         update_data = {k: v for k, v in place_data.items() if k in allowed_fields}
 
-        # Validation simple
+        # Validation du prix
         if "price" in update_data and update_data["price"] < 0:
             return {"error": "Price cannot be negative"}, 400
 
+        # Validation des coordonnées
         for coord in ["latitude", "longitude"]:
-            if coord in update_data and not (-180 <= update_data[coord] <= 180 if coord == "longitude" else -90 <= update_data[coord] <= 90):
-                return {"error": f"{coord} out of range"}, 400
+            if coord in update_data:
+                val = update_data[coord]
+                if coord == "latitude" and not (-90 <= val <= 90):
+                    return {"error": f"{coord} out of range (-90 à 90)"}, 400
+                if coord == "longitude" and not (-180 <= val <= 180):
+                    return {"error": f"{coord} out of range (-180 à 180)"}, 400
 
         # Gestion des amenities
         amenities_objs = []
@@ -148,8 +171,10 @@ class PlaceDetail(Resource):
                     return {"error": f"Amenity with ID {amenity_id} does not exist"}, 400
                 amenities_objs.append(amenity)
 
-        # Gestion propriétaire
+        # Gestion propriétaire (seulement admin)
         if "owner_id" in update_data:
+            if not is_admin and update_data["owner_id"] != current_user_id:
+                return {"error": "You cannot change the owner of this place"}, 403
             owner = facade.get_user(update_data["owner_id"])
             if not owner:
                 return {"error": "Owner ID does not exist"}, 400

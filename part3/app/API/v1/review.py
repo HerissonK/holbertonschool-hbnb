@@ -79,7 +79,8 @@ class ReviewList(Resource):
             {
                 'id': review.id,
                 'text': review.text,
-                'rating': review.rating
+                'rating': review.rating,
+                'place_id': review.place_id
             }
             for review in list_reviews
         ], 201
@@ -160,24 +161,21 @@ class ReviewResource(Resource):
     @api.response(400, 'Invalid input data')
     @jwt_required()
     def delete(self, review_id):
-        """Delete a review"""
-        # Placeholder for the logic to delete a review
-        current_user = get_jwt_identity()
-        check_is_admin = get_jwt()
-        is_admin = check_is_admin.get("is_admin", False)
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get("is_admin", False)
 
-        review = api.payload
-
+        review = facade.get_review(review_id)
         if not review:
             return {"error": "Review not found"}, 404
 
-        if not is_admin and review["user_id"] != current_user:
-            return {"error": "You can only delete your own reviews"}, 403
+        # Vérification des permissions
+        if not is_admin and review.user_id != current_user_id:
+            return {"error": "Unauthorized action"}, 403
 
         facade.delete_review(review_id)
-        return {
-            "message": "Review deleted successfully"
-        }, 200
+        return {"message": "Review deleted successfully"}, 200
+
 
 
 @api.route('/places/<place_id>/reviews')
