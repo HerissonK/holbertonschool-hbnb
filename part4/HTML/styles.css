@@ -1,40 +1,177 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
-    margin: 0;
-    padding: 0;
+/* ======== RESET & BASE ======== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-header, footer {
-    background-color: #222;
-    color: white;
-    text-align: center;
-    padding: 1rem;
+body {
+  background-color: #f7f7f7;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* ======== HEADER ======== */
+header {
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header .container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo img {
+  height: 40px;
 }
 
 nav a {
-    color: white;
-    text-decoration: none;
-    margin: 0 10px;
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+  margin-left: 20px;
+  transition: color 0.3s;
 }
 
+nav a:hover {
+  color: #ff385c; /* Couleur signature Airbnb */
+}
+
+/* ======== MAIN CONTENT ======== */
 main {
-    padding: 2rem;
-    max-width: 800px;
-    margin: auto;
+  width: 90%;
+  max-width: 1200px;
+  margin: 40px auto;
 }
 
+/* === Filtres === */
 #filter {
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
 }
 
+#filter label {
+  font-weight: 500;
+  color: #555;
+}
+
+#filter select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* === Liste des lieux === */
+#places-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+/* === Carte d’un lieu === */
 .place-card {
-    background: white;
-    border-radius: 10px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.place-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.place-card h3 {
+  font-size: 1.2rem;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.place-card p {
+  margin-bottom: 6px;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.place-card strong {
+  color: #111;
+}
+
+.place-card a {
+  text-decoration: none;
+  background-color: #ff385c;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  display: inline-block;
+  margin-top: 8px;
+  transition: background 0.3s ease;
+}
+
+.place-card a:hover {
+  background-color: #e31c5f;
+}
+
+/* ======== FOOTER ======== */
+footer {
+  background-color: #fff;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+  padding: 20px 10px;
+  margin-top: 50px;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.footer-links {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: #555;
+  margin: 0 10px;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.footer-links a:hover {
+  color: #ff385c;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 768px) {
+  header .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  nav a {
+    margin: 10px 10px 0 0;
+  }
+
+  #places-list {
+    grid-template-columns: 1fr;
+  }
 }
