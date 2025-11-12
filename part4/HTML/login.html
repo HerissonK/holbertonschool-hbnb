@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - HBnB</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="HBnB Logo">
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="login-section">
+            <h2>Login</h2>
+            <form id="login-form">
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p id="error-message" style="color: red;"></p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 HBnB</p>
+    </footer>
+
+    <script src="login.js"></script>
+</body>
+</html>

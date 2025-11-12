@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Details</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="header-logo">
+            <a href="index.html"><img src="images/logo.png" alt="HBnB logo"></a>
+        </div>
+        <nav>
+            <a href="login.html" id="login-link">Login</a>
+            <a href="index.html" id="index-link">Home</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section id="place-details"></section>
+
+    <section id="add-review">
+        <h3>Add a Review</h3>
+        <form id="review-form">
+            <textarea id="review-text" required></textarea><br>
+            <button type="submit">Submit Review</button>
+        </form>
+    </section>
+
+    <section id="reviews-list">
+        <h3>Reviews</h3>
+    </section>
+</main>
+
+<script src="place.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Environnement virtuel
+venv/
+
+# Fichiers compilés Python
+__pycache__/
+*.pyc
+
+# Fichiers système
+.DS_Store
+*.log
+.env
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# DB locale
+instance/*.db
+
+*.pyc
