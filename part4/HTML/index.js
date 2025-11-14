@@ -10,14 +10,33 @@ function getCookie(name) {
 function checkAuthentication() {
     const token = getCookie('token');
     const loginLink = document.getElementById('login-link');
+    const logoutButton = document.getElementById('logout-button');
 
     if (!token) {
-        loginLink.style.display = 'inline-block';
+        if (loginLink) loginLink.style.display = 'inline-block';
+        if (logoutButton) logoutButton.style.display = 'none';
         fetchPlaces(null);
     } else {
-        loginLink.style.display = 'none';
+        if (loginLink) loginLink.style.display = 'none';
+        if (logoutButton) logoutButton.style.display = 'inline-block';
         fetchPlaces(token);
     }
+}
+
+// === LOGOUT ===
+function logout() {
+    // Supprime le cookie token
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    
+    // Réaffiche le lien de login et cache le bouton logout
+    const loginLink = document.getElementById('login-link');
+    const logoutButton = document.getElementById('logout-button');
+
+    if (loginLink) loginLink.style.display = 'inline-block';
+    if (logoutButton) logoutButton.style.display = 'none';
+
+    // Recharge la liste des lieux sans token
+    fetchPlaces(null);
 }
 
 // === FETCH PLACES ===
@@ -95,4 +114,9 @@ function handleFilterChange(event) {
 // === INIT ===
 document.addEventListener('DOMContentLoaded', () => {
     checkAuthentication();
+
+    const logoutButton = document.getElementById('logout-button');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', logout);
+    }
 });
