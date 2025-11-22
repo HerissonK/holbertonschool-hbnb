@@ -25,17 +25,14 @@ function checkAuthentication() {
 
 // === LOGOUT ===
 function logout() {
-    // Supprime le cookie token
     document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
     
-    // Réaffiche le lien de login et cache le bouton logout
     const loginLink = document.getElementById('login-link');
     const logoutButton = document.getElementById('logout-button');
 
     if (loginLink) loginLink.style.display = 'inline-block';
     if (logoutButton) logoutButton.style.display = 'none';
 
-    // Recharge la liste des lieux sans token
     fetchPlaces(null);
 }
 
@@ -105,10 +102,36 @@ function populatePriceFilter() {
 
 function handleFilterChange(event) {
     const maxPrice = event.target.value ? parseFloat(event.target.value) : Infinity;
-    document.querySelectorAll('.place-card').forEach(card => {
+    const cards = document.querySelectorAll('.place-card');
+    const placesList = document.getElementById('places-list');
+
+    let visibleCount = 0;
+
+    cards.forEach(card => {
         const price = parseFloat(card.getAttribute('data-price')) || 0;
-        card.style.display = price <= maxPrice ? 'block' : 'none';
+        if (price <= maxPrice) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
     });
+
+    // === If no visible card, show message ===
+    const existingMessage = document.getElementById('no-results-message');
+
+    if (visibleCount === 0) {
+        if (!existingMessage) {
+            const msg = document.createElement('p');
+            msg.id = 'no-results-message';
+            msg.textContent = 'No place correspond to your choices.';
+            msg.style.textAlign = 'center';
+            msg.style.marginTop = '20px';
+            placesList.appendChild(msg);
+        }
+    } else {
+        if (existingMessage) existingMessage.remove();
+    }
 }
 
 // === INIT ===

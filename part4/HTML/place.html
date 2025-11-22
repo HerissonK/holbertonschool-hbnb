@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Place Details</title>
+    <link rel="icon" type="image/png" href="images/icon.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -22,18 +23,24 @@
 <main>
     <section id="place-details"></section>
 
-    <section id="add-review">
-        <h3>Add a Review</h3>
-        <form id="review-form">
-            <textarea id="review-text" required></textarea><br>
-            <button type="submit">Submit Review</button>
-        </form>
-    </section>
-
     <section id="reviews-list">
         <h3>Reviews</h3>
     </section>
+
+    <section id="add-review">
+        <h3>Add a Review</h3>
+        <form id="review-form">
+            <label for="review-rating">Rating (0–5):</label><br>
+            <input type="number" id="review-rating" min="0" max="5" required><br><br>
+
+            <label for="review-text">Review:</label><br>
+            <textarea id="review-text" required></textarea><br><br>
+
+            <button type="submit">Submit Review</button>
+        </form>
+    </section>
 </main>
+
 
 <script src="place.js"></script>
 </body>

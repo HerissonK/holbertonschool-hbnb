@@ -32,7 +32,7 @@ header .container {
   justify-content: space-between;
 }
 
-.header-logo img {
+.logo img {
   height: 40px;
 }
 
@@ -86,14 +86,17 @@ main {
 /* === Carte d’un lieu === */
 .place-card {
   background: #fff;
-  border-radius: 20px;
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  padding: 20px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
+
 
 .place-card:hover {
   transform: translateY(-4px);
@@ -277,11 +280,12 @@ footer {
 /* --- Section principale des détails --- */
 #place-details {
   background: #fff;
-  padding: 40px 30px;
-  border-radius: 16px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   max-width: 800px;
-  margin: 60px auto;
+  margin: 20px auto;
 }
 
 #place-details h2 {
@@ -304,9 +308,10 @@ footer {
 #add-review {
   background: #fff;
   max-width: 800px;
-  margin: 40px auto;
-  padding: 30px;
-  border-radius: 16px;
+  margin: 20px auto;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
@@ -362,10 +367,11 @@ footer {
 /* --- Section des avis --- */
 #reviews-list {
   max-width: 800px;
-  margin: 40px auto 60px;
+  margin: 20px auto;
   background: #fff;
-  padding: 30px;
-  border-radius: 16px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
@@ -378,10 +384,10 @@ footer {
 
 .review-card {
   background-color: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 15px 20px;
-  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 20px;
   color: #444;
   font-size: 0.95rem;
   line-height: 1.4;

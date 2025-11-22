@@ -55,6 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = checkAuthentication();
     const placeId = getPlaceIdFromURL();
 
+    // === HIDE LOGIN BUTTON IF USER IS AUTHENTICATED ===
+    const loginLink = document.getElementById('login-link');
+    if (token && loginLink) {
+        loginLink.style.display = 'none';
+    }
+
     const reviewForm = document.getElementById('review-form');
     reviewForm.addEventListener('submit', (e) => {
         e.preventDefault();
