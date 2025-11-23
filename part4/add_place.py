@@ -82,8 +82,7 @@ with app.app_context():
             price=data["price"],
             latitude=data["latitude"],
             longitude=data["longitude"],
-            owner_id=user.id,
-            user_id=user.id
+            owner_id=user.id
         )
 
 
