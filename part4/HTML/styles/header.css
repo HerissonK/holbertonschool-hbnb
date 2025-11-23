@@ -1,0 +1,74 @@
+header {
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header .container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo img {
+  height: 40px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+  margin-left: 20px;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: #ff385c;
+}
+
+/* ======== Bouton Login ======== */
+#login-button {
+  display: inline-block;
+  background-color: #ff385c;       /* Couleur signature HBnB */
+  color: #fff;                     /* Texte blanc */
+  padding: 10px 18px;              /* Espacement interne */
+  border-radius: 8px;               /* Coins arrondis */
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;            /* Supprime le soulignement */
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+#login-button:hover {
+  background-color: #e31c5f;       /* Couleur au survol */
+  transform: translateY(-2px);     /* Légère translation vers le haut */
+}
+
+#login-button:active {
+  transform: translateY(0);        /* Revenir à la position initiale au clic */
+}
+
+/* === Logout Button === */
+#logout-button {
+    background-color: #ff385c;   /* Couleur signature HBnB */
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.1s ease;
+}
+
+#logout-button:hover {
+    background-color: #e31c5f;
+    transform: translateY(-2px);
+}

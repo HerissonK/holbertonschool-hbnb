@@ -1,0 +1,13 @@
+footer {
+    all: unset;
+    display: block;
+    margin: 0;
+    padding: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    box-shadow: none;
+    border: none;
+    text-align: center;
+    color: #fff;
+}

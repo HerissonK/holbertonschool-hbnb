@@ -1,0 +1,157 @@
+main {
+  width: 90%;
+  max-width: 1200px;
+  margin: 40px auto;
+}
+
+main h1 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+#filter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+#filter label {
+  font-weight: 500;
+  color: #555;
+}
+
+#filter select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+#places-list {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.place-card {
+  background: #fff;
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.place-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.place-card h3 {
+  font-size: 1.2rem;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.place-card p {
+  margin-bottom: 6px;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.place-card strong {
+  color: #111;
+}
+
+.place-card a {
+  text-decoration: none;
+  background-color: #ff385c;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  display: inline-block;
+  margin-top: 8px;
+  transition: background 0.3s ease;
+}
+
+.place-card a:hover {
+  background-color: #e31c5f;
+}
+
+@media (max-width: 768px) {
+  #places-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+body.index-page {
+  background-image: url("../images/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body.index-page::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* noir semi-transparent */
+  pointer-events: none; /* pour ne pas bloquer les clics */
+  z-index: -1; /* derrière ton contenu */
+}
+
+/* Label "Max Price" */
+#filter label {
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Liste déroulante */
+#filter select {
+    background-color: #fff;
+    color: #222;
+    border: 1px solid #ff385c;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#filter select:focus {
+    border-color: #e31c5f; /* Bordure au focus */
+    box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.15);
+    outline: none;
+}
+
+
+
+
+/* Texte affiché lorsqu'aucune place ne correspond au filtre */
+#no-results-message {
+    color: #ffffff;                    
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px 25px;    
+    border-radius: 12px;               
+    display: inline-block;       
+    text-align: center;    
+    margin: 30px auto;
+    max-width: 400px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+    font-size: 1.1rem;
+}

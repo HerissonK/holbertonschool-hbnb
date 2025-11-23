@@ -101,7 +101,7 @@ class PlaceList(Resource):
                 "price": place.price,
                 "latitude": place.latitude,
                 "longitude": place.longitude,
-                "owner_id": place.owner_id,
+                "owner_name": f"{place.owner.first_name} {place.owner.last_name}",
                 "amenities": [{"id": a.id, "name": a.name} for a in getattr(place, 'amenities', [])]
             })
         return result, 200
@@ -125,7 +125,7 @@ class PlaceDetail(Resource):
             "price": place.price,
             "latitude": place.latitude,
             "longitude": place.longitude,
-            "owner_id": place.owner_id,
+            "owner_name": f"{place.owner.first_name} {place.owner.last_name}",
             "amenities": [{"id": a.id, "name": a.name} for a in getattr(place, 'amenities', [])]
         }, 200
 

@@ -1,0 +1,142 @@
+/* ======== PLACE PAGE ======== */
+
+/* --- Section principale des détails --- */
+#place-details {
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+#place-details h2 {
+  font-size: 2rem;
+  color: #222;
+  margin-bottom: 15px;
+}
+
+#place-details p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+#place-details strong {
+  color: #111;
+}
+
+/* --- Section "Add Review" --- */
+#add-review {
+  background: #fff;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+#add-review h3 {
+  color: #222;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#add-review form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#add-review textarea,
+#add-review input[type="number"] {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#add-review textarea:focus,
+#add-review input[type="number"]:focus {
+  border-color: #ff385c;
+  box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.15);
+  outline: none;
+}
+
+#add-review button {
+  background-color: #ff385c;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease;
+  align-self: center;
+  width: 50%;
+}
+
+#add-review button:hover {
+  background-color: #e31c5f;
+  transform: translateY(-2px);
+}
+
+/* --- Section des avis --- */
+#reviews-list {
+  max-width: 800px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+#reviews-list h3 {
+  font-size: 1.5rem;
+  color: #222;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.review-card {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 15px;
+  color: #444;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.review-card:hover {
+  background-color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.review-card strong {
+  color: #ff385c;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  #place-details,
+  #add-review,
+  #reviews-list {
+    margin: 20px 15px;
+    padding: 20px;
+  }
+
+  #add-review button {
+    width: 100%;
+  }
+}

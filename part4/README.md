@@ -1,67 +1,180 @@
-# 🌆 HBnB, Auth & DB - Part 3
+HBnB — Web Application
 
-***L’objectif** de cette partie était de compléter notre application HBnB en intégrant :*
+Cette application est une version simplifiée d’HBnB, permettant :
 
-* Une **base de données relationnelle** pour **stocker les données** des utilisateurs, logements et réservations.
-* La **mise en place d’endpoints sécurisés avec authentification** (login) et **protection des routes**.
+la gestion des utilisateurs (login)
 
-*Cette étape nous a permis de **passer d’une version locale simple** vers une **architecture plus scalable et sécurisée***.
+l’affichage des logements
 
-## 💻 Concepts clés vus et implémentés
-🟣 **1. Gestion de la base de données** \
-    - Utilisation de **MySQL pour stocker les données** de manière **relationnelle**. \
-    - Utilisation de **SQLAlchemy ORM** pour **interagir avec la DB **et **gérer les relations** (*OneToMany, ManyToMany*).
+la consultation d’un logement
 
-*Exemple de relation :*
-```
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    email = Column(String(128), nullable=False, unique=True)
-    places = relationship('Place', backref='owner', cascade='all, delete')
-```
+l’ajout de reviews (avis)
 
-🟣 **2. Authentification et sécurité** \
-    - **Implémentation d’un système de login avec JWT** (JSON Web Tokens).
-    - **Protection des endpoints sensibles** grâce à un middleware qui vérifie le token.
-    - **Stockage sécurisé** des mots de passe avec **hashing** (bcrypt).
+un filtrage par prix
 
-*Flow principal :*
-```
-1. L’utilisateur envoie email + mot de passe à /login.
-2. Si valide, un JWT est généré et renvoyé.
-3. Chaque requête sur un endpoint protégé doit inclure le token dans les headers.
-```
-🟣 **3. Structure du projet**
-```
-HBnB/ 
-│ 
-├── app/ 
-│   ├── models/ 
-│   ├── API/v2 
-│   ├── auth.py 
-│   ├── db.py 
-│   └── __init__.py 
-│ 
-├── tests/ 
-│   └── TestAmenityEndpoints.py 
-|   ├── TestPlaceEndpoints.py 
-|   ├── TestReviewEndpoints.py 
-|   ├── TestUserEndpoints.py 
-│ 
-├── requirements.txt 
-├── config.py 
-└── run.py 
-```
+une interface entièrement en HTML/CSS/JS vanilla
 
-* **models/ →** *définition des tables et relations SQLAlchemy*
-* **routes/ →** *endpoints RESTful*
-* **auth.py →** *gestion JWT et protection des routes*
-* **db.py →** *configuration et initialisation de la DB*
+une API backend en Flask
 
-## 🤜🏼🤛🏼 Conclusion
+🚀 Installation & Lancement
+1. Installer les dépendances
 
-Merci d'être passer sur notre projet ! \
-Si vous avez des idées d'amélioration ou bien des conseils à transmettre, nous serons ravie d'en échanger
+Avant tout, assurez-vous d’avoir un environnement Python fonctionnel, ainsi que Flask, SQLAlchemy, etc.
 
-**Kevin et Arsinoé**
+pip install -r requirements.txt
+
+2. Préparer la base de données
+
+La première étape est de générer les tables ainsi que les données de base :
+
+Étape 1 → Créer la base et les tables
+python3 script.py
+
+Étape 2 → Ajouter les lieux (places) dans la base
+python3 add_places.py
+
+Étape 3 → Lancer le serveur Flask
+python3 run.py
+
+
+Le serveur démarre sur :
+
+http://127.0.0.1:5000
+
+
+L’interface HTML doit être ouverte via un serveur local ou un simple navigateur.
+
+🧪 Testing — Cas de test recommandés
+
+Ci-dessous, tous les tests à effectuer pour valider la fonctionnalité complète de l’application.
+
+🔐 1. Testing Login
+🎯 Objectifs :
+
+Vérifier que le système d’authentification fonctionne avec et sans erreurs.
+
+✔ Cas de tests :
+1.1 — Connexion avec identifiants valides
+
+Aller sur login.html
+
+Entrer un email et mot de passe valides
+
+Vérifier :
+
+que la requête renvoie un statut 200
+
+que le JWT est bien stocké dans document.cookie
+
+que l’utilisateur est redirigé vers index.html
+
+1.2 — Connexion avec identifiants invalides
+
+Entrer un mauvais mot de passe
+
+Vérifier :
+
+affichage du message d’erreur
+
+absence du cookie token
+
+🏠 2. Testing Index Page (index.html)
+🎯 Objectifs :
+
+Valider l’affichage de la liste des logements + le filtre + l’état de connexion.
+
+✔ Cas de tests :
+2.1 — Affichage des places
+
+Se connecter depuis login.html
+
+Arriver sur index.html
+
+Vérifier :
+
+que la liste des places se charge bien depuis /api/v1/places
+
+2.2 — Filtre client-side sur le prix
+
+Modifier le filtre “Max Price”
+
+Vérifier :
+
+que la liste se réduit automatiquement
+
+qu’un message s’affiche si aucun résultat n’est trouvé
+
+2.3 — Vérifier l’état de connexion dans le header
+
+Connecté → le bouton Logout apparaît, le lien Login disparaît
+
+Non connecté → seul le lien Login apparaît
+
+🏡 3. Testing Place Detail Page (place.html)
+🎯 Objectifs :
+
+S’assurer que les détails du logement + les reviews s’affichent correctement.
+
+✔ Cas de tests :
+3.1 — Navigation vers un logement
+
+Cliquer sur un logement depuis index
+
+Vérifier que :
+
+les infos (titre, description, prix, host, etc.) s’affichent
+
+les reviews apparaissent correctement
+
+3.2 — Formulaire d’ajout de review visible uniquement si authentifié
+
+Si connecté : le formulaire “Add Review” apparaît
+
+Si non connecté : il n’apparaît pas
+
+⭐ 4. Testing Add Review
+🎯 Objectifs :
+
+Valider que seul un utilisateur connecté peut créer une review.
+
+✔ Cas de tests :
+4.1 — Ajouter un avis (utilisateur connecté)
+
+Se connecter
+
+Aller sur une page place
+
+Remplir et envoyer le formulaire
+
+Vérifier :
+
+la review apparaît dans la liste immédiatement
+
+le serveur renvoie un statut 201
+
+le formulaire se vide automatiquement
+
+4.2 — Tenter d’ajouter un avis (non connecté)
+
+Se déconnecter
+
+Aller sur place.html?id=xxx
+
+Vérifier :
+
+que le formulaire n’apparaît pas
+
+ou que l’utilisateur est redirigé vers index.html
+
+4.3 — Messages d’erreur
+
+Entrer une note < 1 ou > 5
+
+Vérifier le message d’erreur côté client
+
+Tenter de reviewer le même logement 2 fois
+→ Vérifier la réponse 409 et le message correspondant
+
+🎉 Conclusion
+
+Une fois tous les tests validés, votre projet HBnB est pleinement fonctionnel.

@@ -1,0 +1,153 @@
+/* ======== ADD REVIEW PAGE ======== */
+
+/* === Body & Main Layout === */
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .header-logo img {
+    height: 40px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #222;
+    font-weight: 500;
+    margin-left: 20px;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #ff385c;
+}
+
+/* === Main Section === */
+main {
+    width: 90%;
+    max-width: 500px;
+    margin: 50px auto;
+}
+
+/* === Add Review Form Section === */
+#add-review {
+    background-color: #fff;
+    padding: 30px 25px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+#add-review h2 {
+    font-size: 1.8rem;
+    color: #222;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#add-review form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#add-review label {
+    font-weight: 500;
+    color: #444;
+}
+
+#add-review input[type="number"],
+#add-review textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: vertical;
+}
+
+#add-review input[type="number"]:focus,
+#add-review textarea:focus {
+    border-color: #ff385c;
+    box-shadow: 0 0 0 3px rgba(255, 56, 92, 0.15);
+    outline: none;
+}
+
+#add-review button {
+    background-color: #ff385c;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.1s ease;
+    width: 50%;
+    align-self: center;
+}
+
+#add-review button:hover {
+    background-color: #e31c5f;
+    transform: translateY(-2px);
+}
+
+/* === Footer === */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px 10px;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    main {
+        width: 95%;
+        margin: 30px auto;
+    }
+
+    #add-review button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    #add-review {
+        padding: 25px 20px;
+    }
+
+    #add-review h2 {
+        font-size: 1.5rem;
+    }
+
+    #add-review button {
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+}

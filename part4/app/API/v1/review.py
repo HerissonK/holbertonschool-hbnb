@@ -41,7 +41,7 @@ class ReviewList(Resource):
             return {"error": "Place not found"}, 404
 
         # --- L'utilisateur ne peut pas noter son propre lieu ---
-        if place.user_id == current_user_id:
+        if place.owner_id == current_user_id:
             return {"error": "You cannot review your own place"}, 403
 
         # --- Vérifie si l'utilisateur a déjà noté ---
