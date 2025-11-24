@@ -61,7 +61,7 @@ function displayPlaceDetails(place) {
     title.textContent = place.title;
     titleContainer.appendChild(title);
 
-    // Contenu du logement (hors titre)
+    // Contenu du logement
     const detailsContainer = document.createElement('div');
     detailsContainer.classList.add('place-info');
 
@@ -91,9 +91,14 @@ function displayPlaceDetails(place) {
 async function fetchPlaceReviews(placeId) {
     try {
         const response = await fetch(`http://127.0.0.1:5000/api/v1/reviews/places/${placeId}/reviews`);
+
         if (!response.ok) throw new Error('Failed to fetch reviews');
+
         const reviews = await response.json();
+
+        // Si la liste est vide → PAS UNE ERREUR
         displayReviews(reviews);
+
     } catch (error) {
         console.error(error);
         const reviewsSection = document.getElementById('reviews-list');
@@ -107,8 +112,9 @@ function displayReviews(reviews) {
     if (!reviewsSection) return;
     reviewsSection.innerHTML = '<h3>Reviews</h3>';
 
+    // Liste vide → message propre
     if (!reviews || reviews.length === 0) {
-        reviewsSection.innerHTML += '<p>No reviews yet.</p>';
+        reviewsSection.innerHTML += `<p>No reviews for this place yet.</p>`;
         return;
     }
 
@@ -117,6 +123,7 @@ function displayReviews(reviews) {
         div.classList.add('review-card');
 
         const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+
         div.innerHTML = `
             <strong>${review.user_name || 'Anonymous'}</strong><br>
             ${review.text}<br>

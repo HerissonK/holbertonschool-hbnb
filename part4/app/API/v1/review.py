@@ -174,7 +174,7 @@ class PlaceReviewList(Resource):
         """Get all reviews for a specific place"""
         reviews = facade.get_reviews_by_place(place_id)
         if not reviews:
-            return {'message': 'No review found for this place'}, 200
+            return [], 200
 
         results = []
         for review in reviews:
